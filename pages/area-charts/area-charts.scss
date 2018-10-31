@@ -1,0 +1,35 @@
+page-area-charts {
+    .select{
+        font-size:small;
+    }
+    .table-header{
+        background-color: aquamarine;
+    }
+
+    .item-list .col{
+        padding: 0%;
+        margin: 0%;
+        
+                
+    }
+
+    .ngx-datatable.bootstrap .datatable-body .datatable-body-row.datatable-row-even{
+        background-color:#d2ffd7;
+    }
+
+    .displayAreaInfo .row{
+        padding: 0%;
+        margin: 0%;
+        height:20px;
+        font-size:small;
+    }
+    .displayAreaInfo .row .label{
+        padding: 0%;
+        margin: 0%;
+    }
+
+    .displayAreaInfo .row .text-input-md{
+        padding: 0%;
+        margin: 0%;
+    }
+}

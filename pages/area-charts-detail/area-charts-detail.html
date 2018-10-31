@@ -1,0 +1,344 @@
+<ion-content #pageContent fullscreen>
+    <form [formGroup]="formGroup" >
+
+    <ion-grid>
+        <ion-row>
+           <ion-col  >
+                <ion-item>
+                    <ion-label stacked>Região Agrosul</ion-label>
+                        <ion-select multiple="false" formControlName="agLocationValue" >
+                        <ion-option *ngFor="let agLoc of agLocation" 
+                                    value="{{agLoc.id}}" >{{agLoc.locationName}}
+                        </ion-option>
+                        </ion-select>
+                </ion-item> 
+            </ion-col>
+          <!--  <ion-col >
+         <ion-item>
+            <ion-label stacked>Tipo Gráfico</ion-label>
+            <ion-select multiple="false"   id="tipoG" formControlName="chartTypeX" >
+                <ion-option  value="seedRanking">Tipo de Cultura</ion-option>
+                      <ion-option  value="getTotalAreaByType">Tipo de Área</ion-option>
+                <ion-option  value="getTotalAreaByCultivType">Região</ion-option>
+                <ion-option  value="farm.rank_by_seed">Tamanho p/ Cultura</ion-option>
+                <ion-option  value="farm.rank_by_size">Tamanho p/ Área</ion-option>
+            </ion-select>
+           </ion-item>
+           </ion-col>-->
+           <ion-col >
+                <ion-label stacked>Limite Resultados</ion-label>
+                <ion-select multiple="false"   formControlName="lineLimit"    >
+                    <ion-option  value="5"  >5</ion-option>
+                    <ion-option  value="10"  >10</ion-option>
+                    <ion-option  value="15"  >15</ion-option>
+                    <ion-option  value="20"  >20</ion-option>
+                    <ion-option  value="25"  >25</ion-option>
+                    <ion-option  value="9999"  >Todos</ion-option>
+                </ion-select>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col  >
+            <ion-item>
+              <ion-label stacked>Área </ion-label>
+              <ion-select multiple="true"    formControlName="farmArea" >
+                  <ion-option value="areapropria"> Própria </ion-option>
+                  <ion-option value="areaarrendada"> Arrendada</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-col>
+         <!--  
+           <ion-col  > 
+              <ion-item>
+              <ion-label stacked>Tipo de Área </ion-label>
+              <ion-select multiple="true"  formControlName="farmAreaType"    >
+                  <ion-option value="1"> Sequeiro </ion-option>
+                  <ion-option value="2"> Irrigada</ion-option>
+              </ion-select>
+            </ion-item>
+          </ion-col> -->
+         <!--   <ion-col  >
+              <ion-item>
+                  <ion-label stacked>Tipo de Cultura</ion-label>
+                    <ion-select multiple="true" formControlName="seedType">
+                        <ion-option *ngFor="let seed of agSeeds"
+                          value="{{seed.id}}" >{{seed.seedName}}
+                        </ion-option>
+                    </ion-select>
+              </ion-item>
+          </ion-col>
+        
+         <ion-col  >
+              <ion-item>
+                  <ion-label stacked>Proprietários</ion-label>
+                    <ion-select multiple="true" formControlName="clientValue"  > 
+                        <ion-option *ngFor="let client of agClients" 
+                        value="{{client.id}}" >{{client.name}}
+                    </ion-option>
+                    </ion-select>
+            </ion-item> 
+          </ion-col>
+        
+          <ion-col  >
+              <ion-item>
+                  <ion-label stacked>Tamanho p/ Cultura</ion-label>
+                    <ion-select multiple="true" formControlName="clientSize"   >
+                        <ion-option  value="GP">GP</ion-option>
+                        <ion-option  value="PP">PP</ion-option>
+                    </ion-select>
+                    
+            </ion-item> 
+          </ion-col>
+          <ion-col  >
+              <ion-item>
+                  <ion-label stacked>Tamanho p/ Área</ion-label>
+                    <ion-select multiple="true"  formControlName="areaSize" >
+                        <ion-option value="mg" >Mega</ion-option>
+                        <ion-option value="g" >Grande</ion-option>
+                        <ion-option value="md" >Médio</ion-option>
+                        <ion-option value="p" >Pequeno</ion-option>
+                    </ion-select>
+                    
+            </ion-item> 
+          </ion-col>
+        -->
+        </ion-row>
+
+        
+        <ion-row>
+            <ion-col>
+                    <button [disabled]="!isenabled" ion-button block (click)="submitForm($event)">Filtrar</button>
+            </ion-col>
+            <ion-col col-9>
+            </ion-col>
+          <!--  <ion-col>
+                 <button id="btnAddNew" ion-button block (click)="addNew()">Máquinas</button>
+            </ion-col>-->
+        </ion-row>
+        
+
+
+      </ion-grid>
+     
+    <ion-row >
+        <ion-label >Área Total Cultivada (Ha)</ion-label>
+        <ion-input readonly="true" formControlName="sumByLocation" type="text"></ion-input>
+        <ion-col col-6></ion-col> 
+        <ion-label >Área da Região (Ha)</ion-label>
+        <ion-input readonly="true" formControlName="sum" type="text"></ion-input>
+    </ion-row>
+
+    <div class="displayAreaInfo">
+        <ion-row >
+                <ion-label >Soja (Ha)</ion-label>
+                <ion-input readonly="true" formControlName="sumSojaLocal" type="text"></ion-input> 
+                <ion-col col-8></ion-col> 
+                <ion-label >Soja (Ha)</ion-label>
+                <ion-input readonly="true" formControlName="sumSoja" type="text"></ion-input>    
+        </ion-row>
+    
+        <ion-row >
+            <ion-label stacked>Milho (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumMilhoLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Milho (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumMilho" type="text"></ion-input>
+        </ion-row>
+
+        <ion-row >
+            <ion-label stacked>Algodão (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumAlgodaoLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Algodão (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumAlgodao" type="text"></ion-input>
+        </ion-row>
+
+        <ion-row >
+            <ion-label stacked>Feijão (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumFeijaoLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Feijão (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumFeijao" type="text"></ion-input>
+        </ion-row>
+
+        <ion-row>
+            <ion-label stacked>Pecuaria (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumPecuariaLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Pecuaria (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumPecuaria" type="text"></ion-input>
+        </ion-row>
+
+        <ion-row>
+            <ion-label stacked>Café (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumCafeLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Café (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumCafe" type="text"></ion-input>
+        </ion-row>
+
+        <ion-row>
+            <ion-label stacked>Hortifruti (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumHortiLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Hortifruti (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumHorti" type="text"></ion-input>
+        </ion-row>
+        <ion-row>
+            <ion-label stacked>Outros (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumOutrosLocal" type="text"></ion-input>
+            <ion-col col-8></ion-col> 
+            <ion-label stacked>Outros (Ha)</ion-label>
+            <ion-input readonly="true" formControlName="sumOutros" type="text"></ion-input>
+        </ion-row> 
+    </div>
+
+
+    <ion-row >
+        <ion-col >
+            <canvas #pieCanvasLocation></canvas>
+        </ion-col>
+        <ion-col   >
+         <canvas #barCanvas></canvas>
+        </ion-col >
+        
+    </ion-row >
+
+    <ion-row >
+            <ion-col  col-10></ion-col>
+        <ion-label stacked>Total Máq.</ion-label>
+        <ion-input readonly="true" formControlName="sumMaquinas" type="text"></ion-input>
+    </ion-row>
+
+    <ion-row >
+        <ion-col >
+              <canvas #pieCanvasCompared></canvas>
+          </ion-col>
+        <ion-col   >
+            <canvas #pieCanvasArea></canvas>
+        </ion-col >
+  
+    </ion-row >  
+    <ion-row >
+        <ion-col >
+               <canvas #barCanvasDetailOwner></canvas> 
+        </ion-col >
+        </ion-row > 
+
+        <ion-col   >
+                <canvas #barCanvasCompared></canvas>
+            </ion-col>
+   <!--   <ion-row>
+        <ion-col >
+            <button id="btnFindData"  [disabled]="!isenabled" ion-button block (click)="loadDetail()">Ver Clientes</button>
+         </ion-col>
+         
+    </ion-row>-->
+     <ion-row style="background-color:#d2ffd7;font-weight:bold">
+        <ion-col col-3></ion-col>
+
+        <ion-col>
+            <ion-input readonly="true" formControlName="clientName" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+            <ion-input readonly="true" formControlName="sumClientSoja" type="text"></ion-input>
+        </ion-col>
+        <ion-col col-3></ion-col>
+     </ion-row>
+     
+     <ngx-datatable  class="bootstrap"  
+                     [rows]="rows"
+                     [columnMode]="'force'" 
+                     [sortType]="'multi'"
+                     [reorderable]="false"
+                     [headerHeight]="50"   
+                     [footerHeight]="50"  
+                     [rowHeight]="'auto'"
+                    >
+        <ngx-datatable-column  name="Marca" >  </ngx-datatable-column>
+        <ngx-datatable-column name="tipoEquipamento" >
+                <ng-template  name="tipoEquipamento" ngx-datatable-header-template>Tipo Máquina</ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column  name="brandName" [resizeable]="false">
+                <ng-template ngx-datatable-header-template>Modelo</ng-template>
+            </ngx-datatable-column>
+        <ngx-datatable-column name="Ano"></ngx-datatable-column>
+        <ngx-datatable-column  name="detailTable" >
+                <ng-template   ngx-datatable-header-template>Especificação</ng-template>
+            </ngx-datatable-column>
+        <ngx-datatable-column name="total" >
+                <ng-template ngx-datatable-header-template>Quantidade</ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+
+
+   </form>
+   
+  
+   <!--  <form [formGroup]="formGroup2"  >
+    <ion-grid>
+        <ion-row>
+        <ion-col>
+            ?
+        </ion-col>
+         <ion-col>
+            Cliente
+         </ion-col>
+         <ion-col>
+            Tipo Cliente
+         </ion-col>
+         <ion-col>
+              Detalhes
+         </ion-col>
+        </ion-row>
+        <ion-row>
+                <ion-col>
+                        
+                </ion-col>
+                 <ion-col>
+                    <input
+                    type='text'
+                    style='width:100%;'
+                    placeholder='Digite um nome para buscar...'
+                    (keyup)='updateFilter($event)'
+                    />
+                 </ion-col>
+                 <ion-col>
+                    
+                 </ion-col>
+                 <ion-col>
+                    
+                 </ion-col>
+                </ion-row>
+
+    
+        <ion-list *ngFor="let client of this.formGroup2.value.clientsValue">
+            <ion-row>
+             <ion-col>
+              <ion-label color="secondary" *ngIf="client.isClienteAgrosul==true">Sim</ion-label>
+              <ion-label color="danger" *ngIf="client.isClienteAgrosul==false">Não</ion-label>
+             </ion-col> 
+            <ion-col>
+              <ion-input readonly="true"
+                    value="{{client.name}}"
+                        type="text">
+              </ion-input>
+            </ion-col>
+            <ion-col>
+             <ion-input readonly="true" 
+                    value="{{client.typeClient.typeName}}"
+                    type="text">
+             </ion-input>
+            </ion-col>
+            <ion-col>
+              <button ion-button color="secondary" (click)="detailClient(client)">
+                  IR
+               </button>
+            </ion-col>
+            </ion-row>
+        </ion-list>
+      
+    </ion-grid>
+  </form>-->
+
+</ion-content>

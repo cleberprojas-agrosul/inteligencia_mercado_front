@@ -1,0 +1,19 @@
+<ion-content padding>
+  <h3>Inteligência de Mercado - Agrosul</h3>
+
+  <img src="assets/imgs/logo.png" alt="logo">
+
+  <form [formGroup]="formGroup">
+    <ion-item>
+      <ion-label stacked>Email</ion-label>
+      <ion-input formControlName="userName" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Senha</ion-label>
+      <ion-input formControlName="userPassword"  type="password"></ion-input>
+    </ion-item>
+    <button ion-button block (click)="login()">Entrar</button>
+  </form>
+  <button ion-button block outline>Registrar</button>
+
+</ion-content>
