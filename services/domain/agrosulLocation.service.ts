@@ -8,10 +8,6 @@ import { AgrosulLocationDTO } from "../../models/agrosulLocationDTO";
 
 @Injectable()
 export class AgrosulLocationService{
-
-
-  
-
     basePath = "/proxyApp";
     constructor(
         public http:HttpClient,
@@ -26,7 +22,6 @@ export class AgrosulLocationService{
          return this.http.get<AgrosulLocationDTO[]>(`${this.basePath}/agrosulLocation/listAll`)
     }
     
-
     findAllByUserId(userID:number): Observable<AgrosulLocationDTO[]>{
         return this.http.get<AgrosulLocationDTO[]>(`${this.basePath}/agrosulLocation/listAllByUserId?userId=${userID}`)
    }

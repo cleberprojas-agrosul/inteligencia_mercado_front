@@ -4,24 +4,27 @@
 
 <ion-grid>
   <ion-row>
-      <ion-col col-4>
-          <button ion-button round small outline  (click)="loadClients()">Carregar</button>
+      <ion-col >
+          <button  ion-button block (click)="loadClients()">Carregar</button>
       </ion-col>
-      <ion-col col-4>
-        <input
-        type='text'
-        style='width:100%;'
-        placeholder='Digite um nome para buscar...'
-        (keyup)='updateFilter($event)'
-        />
-    </ion-col>
+  </ion-row>
+
+  <ion-row>
+      <ion-col col-4></ion-col>
     <ion-col col-4>
-     </ion-col>
+      <input
+      type='text'
+      style='width:100%;'
+      placeholder='Digite um nome para buscar...'
+      (keyup)='updateFilter($event)'
+      />
+    </ion-col>
+    <ion-col col-4></ion-col>
   </ion-row>
 </ion-grid>
 
   <ngx-datatable class="fullscreen" [ngClass]="tablestyle" [rows]="rows" [columnMode]="'force'" 
-  [sortType]="'multi'" [reorderable]="false"  [headerHeight]="50"   [limit]="15" [footerHeight]="50"  [rowHeight]="'auto'" >
+     [sortType]="'multi'" [reorderable]="false"  [headerHeight]="50"   [limit]="15" [footerHeight]="50"  [rowHeight]="'auto'" >
     <ngx-datatable-column name="Id"></ngx-datatable-column>
     <ngx-datatable-column name="Name"></ngx-datatable-column>
     <ngx-datatable-column name="id" [resizeable]="false">

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ClientService } from '../../services/domain/client.service';
 import { ClientDTO } from '../../models/clientDTO';
+import { AgrosulLocationService } from '../../services/domain/agrosulLocation.service';
+import { AgrosulLocationDTO } from '../../models/agrosulLocationDTO';
 
 /**
  * Generated class for the ClientTablePage page.
@@ -22,9 +24,11 @@ export class ClientTablePage {
   agClients: ClientDTO[] = [];
   temp = [];
   rows: ClientDTO[] = []
+  agLocation: AgrosulLocationDTO[] = [];
   
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
+              public agrosulLocationService: AgrosulLocationService,
               public clientService: ClientService) {
   }
 
@@ -38,18 +42,30 @@ export class ClientTablePage {
 
   ionViewDidLoad() {
   //  this.loadClients();
+    this.loadAgrosulLocation(localStorage.getItem('userId'));  
   }
 
-
-
   loadClients(){
-    this.clientService.findAllNames()
-     .subscribe(response=>{
-       this.agClients = response;
-       this.rows = this.agClients;
-     },
-     error=>{console.log(error)})
-   }
+    var regioes:any[]=[0];
+    var i=0;
+    this.agLocation.forEach(r=>{ regioes[i]= r.id;i++});
+    this.clientService.findAllClientsByAgLocationID(regioes)
+    .subscribe(response=>{
+      this.agClients = response;
+      this.rows = this.agClients;
+    },
+    error=>{console.log(error)});
+  }
+
+  loadAgrosulLocation(userID){
+		this.agrosulLocationService.findAllByUserId(userID)
+			.subscribe(response=>{
+				this.agLocation = response
+		},
+		error=>{
+				console.log(error);
+		});	
+	}
 
   updateFilter(event) {
     const val = event.target.value.toLowerCase();

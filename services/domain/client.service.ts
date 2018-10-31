@@ -37,4 +37,8 @@ export class ClientService{
     findAllFarmsByAgLocation(agLocation:number,clientId:number): Observable<ClientDTO[]>{
         return this.http.get<ClientDTO[]>(`${this.basePath}/client/findClientFarmsByAgLocation?regiao=${agLocation}&clientId=${clientId}`)
     }
+
+    findAllClientsByAgLocationID(regiao:number[]): Observable<ClientDTO[]>{
+        return this.http.get<ClientDTO[]>(`${this.basePath}/client/findClientFarmsByAgLocationId?regiao=${regiao}`)
+    }
 }

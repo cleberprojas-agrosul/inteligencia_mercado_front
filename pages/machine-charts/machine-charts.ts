@@ -295,12 +295,12 @@ export class MachineChartsPage {
 	}
 
     ionViewDidLoad() {
-		//this.loadBrands();
-		//this.loadTypeMachines();  
+		this.loadBrands();
+		this.loadTypeMachines();  
 		this.loadAgrosulLocation(localStorage.getItem('userId'));  
 		//this.loadClients();
-		//this.loadConcessionarias();
-		//this.loadAnoModelo();
+		this.loadConcessionarias();
+		this.loadAnoModelo();
 	}
 
 	createBarChart(labels,data){
