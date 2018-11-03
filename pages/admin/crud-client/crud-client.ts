@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { ClientService } from '../../../services/domain/client.service';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { ClientDTO } from '../../../models/clientDTO';
-import { IonicSelectableComponent } from 'ionic-selectable';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { WorkMachineDTO } from '../../../models/workMachineDTO';
 import { FarmsDTO } from '../../../models/farmsDTO';
 import { ViewController } from 'ionic-angular/navigation/view-controller';
-import { WorkMachineDTO } from '../../../models/workMachineDTO';
+import { ClientService } from '../../../services/domain/client.service';
+import { IonicSelectableComponent } from 'ionic-selectable';
+import { WorkMachineService } from '../../../services/domain/workMachine.service';
 
 /**
- * Generated class for the ClientPage page.
+ * Generated class for the CrudClientPage page.
  *
  * See https://ionicframework.com/docs/components/#navigation for more info on
  * Ionic pages and navigation.
@@ -17,10 +18,10 @@ import { WorkMachineDTO } from '../../../models/workMachineDTO';
 
 @IonicPage()
 @Component({
-  selector: 'page-client',
-  templateUrl: 'client.html',
+  selector: 'page-crud-client',
+  templateUrl: 'crud-client.html',
 })
-export class ClientPage {
+export class CrudClientPage {
 
   formGroup: FormGroup;
 
@@ -30,16 +31,19 @@ export class ClientPage {
   agClient:ClientDTO;
   agFarms:FarmsDTO [] = [];
   detailFarmDTO:FarmsDTO;
+  workMachine:WorkMachineDTO;
 
   constructor(
      public navCtrl: NavController,
      public navParams: NavParams,
      public viewCtrl : ViewController,
      public clientService: ClientService,
+     public workMachineService: WorkMachineService,
      public formBuiler:FormBuilder) {
       this.formGroup = formBuiler.group({
-        clientsValue:[]=[0],
-        farms:[]=[0],
+        clientsValue:[]=[''],
+        tipoCliente:[]=[''],
+        farms:[]=[],
         farmsDetail:[]=[0],
         farmsDetailName:[] = [],
         farmsLocation:[] = [],
@@ -83,6 +87,19 @@ export class ClientPage {
   ionViewDidLoad() {
     this.agClients = this.navParams.get('selectedClient');
     this.agFarms   = this.agClients[0].farms;
+    //this.populateForm(this.agClients[0])
+  }
+  showValue(client){
+    alert(client.name);
+  }
+
+  irEditar(machine){
+    this.workMachineService.findById(machine.id)
+    .subscribe(response=>{
+      this.workMachine=response;
+      this.navCtrl.push("WorkMachinePage",{machine:this.workMachine})
+    });
+    
   }
   
   updateFilter(event,index) {
@@ -155,36 +172,9 @@ export class ClientPage {
   } 
 
   populateForm(client:ClientDTO){
-  /*  this.formGroup.controls.farmsLocation.setValue(client.farms[0].agrosulLocation.locationName);
-    this.formGroup.controls.clientPhoneNumber.setValue(event.value.phoneNumber),
-    this.formGroup.controls.clientObs.setValue(event.value.generalObs),
-    this.formGroup.controls.agAgrosulLocation.setValue(event.value.agrosulLocation.locationName),
-    this.formGroup.controls.farmFields.setValue(event.value.farmFields),
-    this.formGroup.value.farmFields.forEach(element => {
-      this.formGroup.controls.farmsFieldName.setValue(element.farmFielType.typeName),
-      this.formGroup.controls.farmsFieldTotalArea.setValue(element.farmFielType.totalAreaType)
-      
-    });
-    this.formGroup.controls.farmAreas.setValue(event.value.farmAreas),
-    this.formGroup.value.farmAreas.forEach(element => {
-      this.formGroup.controls.farmAreaType.setValue(element.farmAreaType.typeName),
-      this.formGroup.controls.farmAreaType.setValue(element.totalArea)
-    });
-
-    this.formGroup.controls.farmCultivAreas.setValue(event.value.farmCultivAreas),
-    console.log(event.value.farmCultivAreas);
-    this.formGroup.value.farmCultivAreas.forEach(element => {
-      this.formGroup.controls.farmSeed.setValue(element.farmSeed.seedName),
-      this.formGroup.controls.farmTotalAreaSeed.setValue(element.totalAreaSeed)
-    });
-
-    this.formGroup.controls.workMachines.setValue(event.value.workMachines),
-    console.log(event.value.workMachines),
-    this.formGroup.value.workMachines.forEach(element => {
-      this.formGroup.controls.typeMachine.setValue(element.typeMachine.typeName),
-      this.formGroup.controls.machineBrand.setValue(element.machineModel.machineBrand.name),
-      this.formGroup.controls.machineModel.setValue(element.machineModel.name)
-    }); */
+    this.formGroup.controls.farms.setValue(client.farms);
+    
+   
   }
   public closeModal(){
       this.viewCtrl.dismiss();

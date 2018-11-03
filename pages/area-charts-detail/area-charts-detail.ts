@@ -94,7 +94,8 @@ export class AreaChartsDetailPage {
       this.color = new ColorChartUtils()
       this.formGroup = formBuiler.group({
 				farmAreaType:[] =[],
-				agLocationValue:[]=[0],
+        agLocationValue:[]=[0],
+        agLocationName:[]=[""],
 				clientValue:[]=[],
 				farmArea:[]=[],
 				compareData:[] = [],
@@ -129,6 +130,9 @@ export class AreaChartsDetailPage {
         sumCafeLocal:[]=[0],
         sumHortiLocal:[]=[0],
         sumOutrosLocal:[]=[0],
+
+        sumGpPp:[]=[0],
+        sumClassTamArea:[]=[0],
 
         sumMaquinas:[]=[0],
         AllBrands:[]=[""],
@@ -331,7 +335,6 @@ setCultivTotalByLocation(total:number,key:String){
 
 }
 
-
 setCultivTotal(total:number,key:String){
   if(key=='Soja')
      this.formGroup.controls.sumSoja.setValue(this.formatarNumero(total));
@@ -349,7 +352,6 @@ setCultivTotal(total:number,key:String){
      this.formGroup.controls.sumCafe.setValue(this.formatarNumero(total));
   else   
      this.formGroup.controls.sumHorti.setValue(this.formatarNumero(total));
-
 }
 
 createPieChartAreaTotal(labels,data1){
@@ -371,7 +373,8 @@ createPieChartAreaTotal(labels,data1){
           text: 'Tipo de Cultura (Todas as Regiões)'
         },
         legend: {
-          display: true
+          display: true,
+          position:'left'
         },
         animation: {
           duration: 500,
@@ -425,9 +428,6 @@ createPieChartAreaTotal(labels,data1){
   return this.pieChartLocation;
 }
 
-
-
-
 createPieChart(labels,data1){
 	if(this.barChart == null){
       this.barChart = new Chart(this.barCanvas.nativeElement, {
@@ -443,11 +443,12 @@ createPieChart(labels,data1){
         responsive: true,
         maintainAspectRatio: true,
         legend: {
-          display: true
+          display: true,
+          position:'right'
         },
         title: {
           display: true,
-          text: 'Tipo de Cultura da Região'
+          text: 'Tipo de Cultura da Região - '+this.formGroup.value.agLocationName
         },
         animation: {
           duration: 500,
@@ -491,6 +492,7 @@ createPieChart(labels,data1){
   }else{
     this.barChart.data.labels=labels;
     this.barChart.data.backgroundColor=this.getBackgroundColors(labels);
+    this.barChart.options.title.text='Tipo de Cultura da Região - '+this.formGroup.value.agLocationName
     this.barChart.data.datasets.forEach((dataset) => {
              dataset.data=data1;
              dataset.backgroundColor=this.getBackgroundColors(labels);
@@ -559,13 +561,18 @@ addNew():void{
         i++;
       })
 		
-   		this.createPieChartCompared(label,data);
+   		this.createPieChartCompared(label,data,this.formGroup.value.agLocationName);
 		},
 		error =>{console.log(error)}
 	);	 	     
  }
 
- createPieChartCompared(labels:String[], data:number[]){
+ createPieChartCompared(labels:String[], data:number[],locationName:String){
+var sumTotal=0
+  data.forEach(iten => {
+    sumTotal+= iten;
+  });
+  this.formGroup.controls.sumGpPp.setValue(sumTotal);
   if(this.pieChartCompared == null){
       this.pieChartCompared = new Chart(this.pieCanvasCompared.nativeElement, {
         type: 'pie',
@@ -577,9 +584,13 @@ addNew():void{
             backgroundColor:this.getBackgroundColors(labels)
           }]
         },options:{
-          title: {
+          legend: {
             display: true,
-            text: 'Classificação p/ Tipo de Cultura'
+            position:'left'
+          },
+          title: {
+            display: true,  
+            text: 'Classificação p/ Tipo de Cultura - '+locationName
           },
           'onClick': (c,i)=> {
             var e = i[0] ;
@@ -597,9 +608,11 @@ addNew():void{
             var fontSize = 16;
             var fontStyle = 'normal';
             var fontFamily = 'Helvetica Neue';
+            var sumTotal=0;
             ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
+            console.log(this.data)
             this.data.datasets.forEach(function (dataset) {
               for (var i = 0; i < dataset.data.length; i++) {
                 var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
@@ -618,9 +631,8 @@ addNew():void{
                   ctx.fillText(percent, model.x + x, model.y + y + 15);
                 // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
                 // Display percent in another line, line break doesn't work for fillText
-               
               }
-            });               
+            });
           }
         },
         events: ['click'],
@@ -630,6 +642,7 @@ addNew():void{
   }else{
       this.pieChartCompared.data.labels=labels;
       this.pieChartCompared.data.backgroundColor=this.getBackgroundColors(labels);
+      this.pieChartCompared.options.title.text='Classificação p/ Tipo de Cultura - '+locationName;
       this.pieChartCompared.data.datasets.forEach((dataset) => {
              dataset.data=data;
              dataset.backgroundColor=this.getBackgroundColors(labels);
@@ -639,6 +652,12 @@ addNew():void{
   }
 
   createPieChartTamanhoArea(labels:String[], data:number[]){
+    var sumTotal=0
+    data.forEach(iten => {
+      sumTotal+= iten;
+    });
+    this.formGroup.controls.sumClassTamArea.setValue(sumTotal);
+
     if(this.pieChartArea == null){
         this.pieChartArea = new Chart(this.pieCanvasArea.nativeElement, {
           type: 'pie',
@@ -652,7 +671,7 @@ addNew():void{
           },options:{
             title: {
               display: true,
-              text: 'Classificação p/ Tam. Área'
+              text: 'Classificação p/ Tam. Área - '+this.formGroup.value.agLocationName
             },
             'onClick': (c,i)=> {
               var e = i[0] ;
@@ -672,7 +691,7 @@ addNew():void{
                       data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
                       index++;
                     });
-                    this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea);
+                    this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea + ' - Total Clientes:'+data.length);
                   })
                
               }
@@ -719,6 +738,7 @@ addNew():void{
     }else{
         this.pieChartArea.data.labels=labels;
         this.pieChartArea.data.backgroundColor=this.getBackgroundColors(labels);
+        this.pieChartArea.options.title.text='Classificação p/ Tam. Área - '+this.formGroup.value.agLocationName
         this.pieChartArea.data.datasets.forEach((dataset) => {
                dataset.data=data;
                dataset.backgroundColor=this.getBackgroundColors(labels);
@@ -754,7 +774,6 @@ addNew():void{
          soma += element.parqueMaquinas;
        });
        this.createBarChartDetail(label,data,typeMachine);
-  
      },
     error =>{console.log(error)}
    );
@@ -878,7 +897,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
          },options:{  
             title: {
               display: true,
-              text: 'Clientes p/ Tipo de Cultura e Tamanho de Área'
+              text: 'Clientes p/ Tipo de Cultura e Tamanho de Área - '+this.formGroup.value.agLocationName
             },           
           'onClick': (c,i)=> {
             if(i[0]!=null){
@@ -942,12 +961,14 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                   beginAtZero: true
               }
           }]
+          
           },
        }
   });
  }else{
      this.barChartDetailOwner.data.labels=labels;
      this.barChartDetailOwner.data.backgroundColor=labelColors;
+     this.barChartDetailOwner.options.title.text= 'Clientes p/ Tipo de Cultura e Tamanho de Área - '+this.formGroup.value.agLocationName
      var i = this.barChartDetailOwner.data.datasets.length;
      var dt = {
                  label: 'Clientes',
@@ -1120,18 +1141,24 @@ findChildByValue(brandName,typeMachine){
     );
   }
 
-  loadAgrosulLocation(userID){
+ loadAgrosulLocation(userID){
+    if(localStorage.getItem('role') =='admin'){
+      var todos = new AgrosulLocationDTO();
+      todos.id='0';
+      todos.locationName='Todos';
+      this.agLocation.push(todos);
+    }
 		this.agrosulLocationService.findAllByUserId(userID)
-			.subscribe(response=>{
-            this.agLocation = response
+		  	.subscribe(response=>{
+           // this.agLocation = response
+            response.forEach(iten=>{ 
+              todos = new AgrosulLocationDTO();
+              todos.id=iten.id;
+              todos.locationName=iten.locationName;
+              this.agLocation.push(todos);
+            });
             if(this.agLocation!=undefined || this.agLocation!=null){
               this.isenabled = true;
-              if(localStorage.getItem('role') =='admin'){
-                var todos = new AgrosulLocationDTO();
-                todos.id='0';
-                todos.locationName='Todos';
-                this.agLocation.push(todos);
-              }
               this.formGroup.controls.agLocationValue.setValue(this.agLocation[0].id)
             }
               
@@ -1151,6 +1178,10 @@ findChildByValue(brandName,typeMachine){
 		});	
   }
 
+  getValueFromLocation(locationName){
+    this.formGroup.controls.agLocationName.setValue(locationName);
+  }
+  
   detailClient(client:ClientDTO){
     var cli : ClientDTO[] =[client];
     var data = { selectedClient : cli };

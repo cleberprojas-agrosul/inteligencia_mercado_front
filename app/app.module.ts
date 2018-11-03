@@ -23,6 +23,8 @@ import { AreaChartsPage } from '../pages/area-charts/area-charts';
 import { ClientTablePage } from '../pages/client-table/client-table';
 import { AreaChartsDetailPage } from '../pages/area-charts-detail/area-charts-detail';
 import { UserService } from '../services/domain/user.service';
+import { WorkMachineService } from '../services/domain/workMachine.service';
+import { HomePage } from '../pages/home/home';
 
 
 @NgModule({
@@ -61,7 +63,8 @@ import { UserService } from '../services/domain/user.service';
     AgrosulLocationService,
     ClientService,
     AreaChartService,
-    UserService
+    UserService,
+    WorkMachineService
   ]
 })
 export class AppModule {}

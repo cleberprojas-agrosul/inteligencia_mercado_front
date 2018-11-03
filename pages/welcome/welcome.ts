@@ -8,6 +8,7 @@ import { MachineChartsPage } from '../machine-charts/machine-charts';
 import { AreaChartsPage } from '../area-charts/area-charts';
 import { ClientTablePage } from '../client-table/client-table';
 import { AreaChartsDetailPage } from '../area-charts-detail/area-charts-detail';
+import { HomePage } from '../home/home';
 
 /**
  * Generated class for the WelcomePage page.

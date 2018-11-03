@@ -83,4 +83,13 @@ export class ClientTablePage {
         this.navCtrl.push('ClientPage',data);
     });    
   }
+
+  edit(row){
+    var data:any;
+    this.clientService.findById(row.id).subscribe(response=>{
+        var cli : ClientDTO[] =[response];
+        data = { selectedClient :cli };
+        this.navCtrl.push('CrudClientPage',data);
+    });    
+  }
 }
