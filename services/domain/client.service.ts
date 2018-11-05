@@ -5,6 +5,7 @@ import { Observable } from "rxjs/Rx";
 import { Platform } from "ionic-angular/platform/platform";
 import { ClientDTO } from "../../models/clientDTO";
 import { FarmsDTO } from "../../models/farmsDTO";
+import { AgrosulClassificationDTO } from "../../models/agrosulClassificationDTO";
 
 @Injectable()
 export class ClientService{
@@ -41,4 +42,13 @@ export class ClientService{
     findAllClientsByAgLocationID(regiao:number[]): Observable<ClientDTO[]>{
         return this.http.get<ClientDTO[]>(`${this.basePath}/client/findClientFarmsByAgLocationId?regiao=${regiao}`)
     }
+
+    findClientByMultipleLocationAndPorte(regiao:number[],porte:String): Observable<ClientDTO[]>{
+        return this.http.get<ClientDTO[]>(`${this.basePath}/client/findClientByMultipleLocationAndPorte?regiao=${regiao}&porte=${porte}`)
+    }
+
+    findClientsByColorClass(regiao:number[],porte:String): Observable<AgrosulClassificationDTO[]>{
+        return this.http.get<AgrosulClassificationDTO[]>(`${this.basePath}/client/findClientsByColorClass?regiao=${regiao}&porte=${porte}`)
+    }
+    
 }

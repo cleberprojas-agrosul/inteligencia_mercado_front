@@ -27,6 +27,15 @@ export class ColorChartUtils{
       this.chartColor.set("Medio","rgb(0, 255, 200)");
       this.chartColor.set("Pequeno","rgb(255, 174, 0)");
       this.chartColor.set("Grande","#02e232");
+      this.chartColor.set("green","rgba(8, 117, 12, 0.7)");
+      this.chartColor.set("soft_green","#99ff00");
+      this.chartColor.set("red","red");
+      this.chartColor.set("yellow","rgb(255, 251, 0)");
+
+      this.chartColor.set("rgba(8, 117, 12, 0.7)","green");
+      this.chartColor.set("#99ff00","soft_green");
+      this.chartColor.set("rgb(255, 251, 0)","yellow");
+      
   }
   
 

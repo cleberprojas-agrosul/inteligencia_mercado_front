@@ -16,6 +16,7 @@ import { MachineChartService } from '../../services/domain/machine-chart.service
 import { MachineModelChartDTO } from '../../models/charts/machineModelChartDTO';
 import { MachineBrandService } from '../../services/domain/machineBrand.service';
 import { MachineBrandDTO } from '../../models/machineBrandDTO';
+import { AgrosulClassificationDTO } from '../../models/agrosulClassificationDTO';
 
 
 
@@ -36,6 +37,8 @@ export class AreaChartsDetailPage {
   @ViewChild('pieCanvasArea') pieCanvasArea;
 
   @ViewChild('pieCanvasLocation') pieCanvasLocation;
+  
+  @ViewChild('pieCanvasClientTamArea') pieCanvasClientTamArea;
   
 
   @ViewChild('barCanvasCompared') barCanvasCompared;
@@ -59,6 +62,8 @@ export class AreaChartsDetailPage {
   barChartCompared: Chart;
   barChartDetail: Chart;
   barChartDetailOwner: Chart;
+
+  pieChartClientTamArea: Chart;
   
   public columns : any;
 
@@ -79,6 +84,7 @@ export class AreaChartsDetailPage {
   rows: MachineModelChartDTO[]=[]; 
   clientName:string=""
   porteCliente:string="";
+  classPorCor: String="";
 
 
   constructor(
@@ -133,6 +139,7 @@ export class AreaChartsDetailPage {
 
         sumGpPp:[]=[0],
         sumClassTamArea:[]=[0],
+        sumClassClienteAgrosul:[]=[0],
 
         sumMaquinas:[]=[0],
         AllBrands:[]=[""],
@@ -208,11 +215,18 @@ export class AreaChartsDetailPage {
 }
 
 createMultiLevelBartChart(fields){
-  var filter:AreaFilterDTO = new AreaFilterDTO();
-    filter.agLocationId = this.formGroup.value.agLocationValue==null?0:this.formGroup.value.agLocationValue,
+    var filter:AreaFilterDTO = new AreaFilterDTO();
+    if( this.formGroup.value.agLocationValue=="901"){
+      filter.agLocationId=[2,3,4,5,6,7,8,9,10,11,12,13,14];
+    }else if(this.formGroup.value.agLocationValue=="902"){
+      filter.agLocationId=[15,16,17];
+    }else{
+      filter.agLocationId = this.formGroup.value.agLocationValue==null?0:this.formGroup.value.agLocationValue;
+    }
     filter.clientValue  = this.formGroup.value.clientValue,
     filter.farmArea  = this.formGroup.value.farmArea,
     filter.chartTypeX = this.formGroup.value.chartTypeX,
+    console.log(filter);
     this.areaChartService.listAllSeedTypeByLocation(fields,filter)
     .subscribe(response=>{
       this.items = response;
@@ -267,7 +281,7 @@ createMultiLevelBartChart(fields){
 
 setDataPieChartAreaTotal(fields){
   var filter:AreaFilterDTO = new AreaFilterDTO();
-    filter.agLocationId = 0,
+    filter.agLocationId = [0],
     filter.clientValue  = null,
     filter.farmArea  = this.formGroup.value.farmArea,
     filter.chartTypeX = "seedRanking",
@@ -548,8 +562,9 @@ createBarChart(labels,dataset){
 addNew():void{
   this.isenabled=true;
   this.areaChartService.getAreasByFilters(
-		this.formGroup.value.agLocationValue,
-		null
+		this.getRegioes(),
+    null,
+    null
 		).subscribe(response=>{
       response;
  			var label: String[] = [];
@@ -560,14 +575,12 @@ addNew():void{
         data[i]=item['quantidade'];
         i++;
       })
-		
-   		this.createPieChartCompared(label,data,this.formGroup.value.agLocationName);
+		this.createPieChartCompared(label,data,this.formGroup.value.agLocationName);
 		},
 		error =>{console.log(error)}
 	);	 	     
  }
-
- createPieChartCompared(labels:String[], data:number[],locationName:String){
+createPieChartCompared(labels:String[], data:number[],locationName:String){
 var sumTotal=0
   data.forEach(iten => {
     sumTotal+= iten;
@@ -596,7 +609,7 @@ var sumTotal=0
             var e = i[0] ;
             if(i[0]!=null){
               this.porteCliente=i[0]._chart.config.data.labels[e._index];
-              this.findByValue(this.porteCliente);
+              this.defineTypeClient(this.porteCliente);
             }
         },
         animation: {
@@ -651,27 +664,49 @@ var sumTotal=0
     }	
   }
 
+  findByValue(porteCliente, classPorCor){
+    this.areaChartService.getAreasByFilters(
+      this.getRegioes(),
+      porteCliente,
+      classPorCor
+     ).subscribe(item=>{
+         var label: String[] = [];
+         var data: number[] = [];
+         var i=0;
+         console.log(item)
+         item.forEach(item=>{
+           label[i]= item['area'];
+           data[i]=item['quantidade'];
+           i++;
+         })
+         this.createPieChartTamanhoArea(label,data)
+     });
+  } 
+  
   createPieChartTamanhoArea(labels:String[], data:number[]){
     var sumTotal=0
     data.forEach(iten => {
       sumTotal+= iten;
     });
     this.formGroup.controls.sumClassTamArea.setValue(sumTotal);
-
-    if(this.pieChartArea == null){
-        this.pieChartArea = new Chart(this.pieCanvasArea.nativeElement, {
+    if(this.pieChartClientTamArea == null){
+        this.pieChartClientTamArea = new Chart(this.pieCanvasClientTamArea.nativeElement, {
           type: 'pie',
           data: {
             labels: labels,
             datasets: [{
-              label: 'Classificação p/ Tam. Área',
+              label: 'Clientes p/ Tamanho Área ',
               data: data,
-              backgroundColor:this.getBackgroundColors(labels)
+              backgroundColor:this.getBackgroundColors(labels),
             }]
           },options:{
             title: {
               display: true,
-              text: 'Classificação p/ Tam. Área - '+this.formGroup.value.agLocationName
+              text: 'Clientes p/ Tamanho Área - '+this.formGroup.value.agLocationName
+            },
+            legend: {
+              display: true,
+              position:'right'
             },
             'onClick': (c,i)=> {
               var e = i[0] ;
@@ -681,9 +716,10 @@ var sumTotal=0
               if(i[0]!=null){
                 var tamanhoArea=i[0]._chart.config.data.labels[e._index];
                 this.areaChartService.getProprietariosByTamanhoAreaCultura(
-                  this.formGroup.value.agLocationValue,
+                  this.getRegioes(),
                   this.porteCliente,
-                  tamanhoArea
+                  tamanhoArea,
+                  this.classPorCor
                   ).subscribe(response=>{
                       response.forEach(element => {
                       var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
@@ -691,7 +727,7 @@ var sumTotal=0
                       data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
                       index++;
                     });
-                    this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea + ' - Total Clientes:'+data.length);
+                    this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea);
                   })
                
               }
@@ -731,21 +767,22 @@ var sumTotal=0
               });               
             }
           },
+         
           events: ['click'],
           hover: {animationDuration: 0}  
       }
     });
     }else{
-        this.pieChartArea.data.labels=labels;
-        this.pieChartArea.data.backgroundColor=this.getBackgroundColors(labels);
-        this.pieChartArea.options.title.text='Classificação p/ Tam. Área - '+this.formGroup.value.agLocationName
-        this.pieChartArea.data.datasets.forEach((dataset) => {
+        this.pieChartClientTamArea.data.labels=labels;
+        this.pieChartClientTamArea.data.backgroundColor=this.getBackgroundColors(labels);
+        this.pieChartClientTamArea.options.title.text='Clientes p/ Tamanho Área - '+this.formGroup.value.agLocationName
+        this.pieChartClientTamArea.data.datasets.forEach((dataset) => {
                dataset.data=data;
                dataset.backgroundColor=this.getBackgroundColors(labels);
         });
-        this.pieChartArea.update();
+        this.pieChartClientTamArea.update();
       }	
-    }
+}
 
  findMachinesByBrand(typeMachine){
   var test=0;
@@ -897,7 +934,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
          },options:{  
             title: {
               display: true,
-              text: 'Clientes p/ Tipo de Cultura e Tamanho de Área - '+this.formGroup.value.agLocationName
+              text: 'Clientes - '+this.formGroup.value.agLocationName+ ' - Total Clientes:'+data.length
             },           
           'onClick': (c,i)=> {
             if(i[0]!=null){
@@ -913,7 +950,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                   this.clientName,
                   "",
                   "",
-                  this.formGroup.value.agLocationValue
+                  this.getRegioes()
                   ).
                   subscribe(response=>{
                       var detail="";
@@ -968,12 +1005,12 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
  }else{
      this.barChartDetailOwner.data.labels=labels;
      this.barChartDetailOwner.data.backgroundColor=labelColors;
-     this.barChartDetailOwner.options.title.text= 'Clientes p/ Tipo de Cultura e Tamanho de Área - '+this.formGroup.value.agLocationName
+     this.barChartDetailOwner.options.title.text= 'Clientes - '+this.formGroup.value.agLocationName+ ' - Total Clientes:'+data.length;
      var i = this.barChartDetailOwner.data.datasets.length;
-     var dt = {
-                 label: 'Clientes',
-                 data: data,
-                 backgroundColor:labelColors
+     var dt= {
+                label: 'Clientes',
+                data: data,
+                backgroundColor:labelColors
                };
      this.barChartDetailOwner.data.datasets.forEach((dataset) => {
              dataset.data=data;
@@ -984,7 +1021,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
    }	
 }
  
- createBarChartDetail(labels:String[], data:number[],clickValue:string){
+createBarChartDetail(labels:String[], data:number[],clickValue:string){
     var labelColors:String[] =[];
     var i=0;
     labelColors = this.getBackgroundColors(labels);
@@ -1063,24 +1100,136 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
            });
        this.barChartDetail.update();
      }	
-}
+ }
 
- findByValue(porteCliente){
-   this.areaChartService.getAreasByFilters(
-     this.formGroup.value.agLocationValue,
-     porteCliente
-   ).subscribe(item=>{
+ getRegioes(){
+    var regioes=[0];
+    if( this.formGroup.value.agLocationValue=='901'){
+      regioes=[2,3,4,5,6,7,8,9,10,11,12,13,14];
+    }else if(this.formGroup.value.agLocationValue=='902'){
+      regioes=[15,16,17];
+    }else{
+      regioes = this.formGroup.value.agLocationValue
+    }
+    return regioes;
+  }
+ 
+  defineTypeClient(porteCliente){
+    var agClientClassification:AgrosulClassificationDTO[];
+    this.clientService.findClientsByColorClass(
+      this.getRegioes(),
+      porteCliente).subscribe(response=>{
+        agClientClassification =  response
         var label: String[] = [];
         var data: number[] = [];
+        var colors: String[] = [];
         var i=0;
-        item.forEach(item=>{
-          label[i]= item['area'];
-          data[i]=item['quantidade'];
+        agClientClassification.forEach(item=>{
+          var lblName ="0 - 10%";
+          if(item.name == "green"){
+            lblName="+50% JD"
+          }else if(item.name=="yellow"){
+            lblName="10 - 30% JD"
+          }else if(item.name=="soft_green"){
+            lblName="30 - 50% JD"
+          }
+          colors[i] = item.name;
+          label[i]= item.total + " = "+lblName ;
+          data[i]=item.total;
           i++;
         })
-        this.createPieChartTamanhoArea(label,data)
-    });
- } 
+        this.createPieChartClassificacaoCliente(label,data,this.getBackgroundColors(colors))
+      });
+  }
+
+ createPieChartClassificacaoCliente(labels:String[], data:number[], colors:String[]){
+  var sumTotal=0
+  data.forEach(iten => {
+    sumTotal+= iten;
+  });
+  this.formGroup.controls.sumClassClienteAgrosul.setValue(sumTotal);
+  if(this.pieChartArea == null){
+      this.pieChartArea = new Chart(this.pieCanvasArea.nativeElement, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Classificação Clientes Agrosul ',
+            data: data,
+            backgroundColor:colors,
+          }]
+        },options:{
+          title: {
+            display: true,
+            text: 'Classificação Clientes Agrosul - '+this.formGroup.value.agLocationName
+          },
+          legend: {
+            display: true,
+            position:'right'
+          },
+          'onClick': (c,i)=> {
+            var e = i[0] ;
+            var label:string[]=[];
+            var data:number[]=[];
+            var index=0;
+            if(i[0]!=null){
+              var tamanhoArea=i[0]._chart.config.data.labels[e._index];
+              var classColor =i[0]._chart.config.data.datasets["0"].backgroundColor[e._index];
+              this.classPorCor = this.color.chartColor.get(classColor)
+              this.findByValue(this.porteCliente, this.classPorCor);
+            }
+        },
+        animation: {
+          duration: 500,
+          easing: "easeOutQuart",
+          onComplete: function () {
+            var ch =  this.chart;
+            var ctx = this.chart.ctx;
+            var fontSize = 16;
+            var fontStyle = 'normal';
+            var fontFamily = 'Helvetica Neue';
+            ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            this.data.datasets.forEach(function (dataset) {
+              for (var i = 0; i < dataset.data.length; i++) {
+                var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
+                    total = dataset._meta[Object.keys(dataset._meta)[0]].total,
+                    //mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
+                    mid_radius = model.outerRadius-20,
+                    start_angle = model.startAngle,
+                    end_angle = model.endAngle,
+                    mid_angle = start_angle + (end_angle - start_angle)/2;
+                var x = mid_radius * Math.cos(mid_angle);
+                var y = mid_radius * Math.sin(mid_angle);
+                ctx.fillStyle = '#444';
+                var isHidden = ch.legend.legendItems[i].hidden;
+                var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
+                if(!isHidden && percent!='0%')
+                  ctx.fillText(percent, model.x + x, model.y + y + 15);
+                // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
+                // Display percent in another line, line break doesn't work for fillText
+               
+              }
+            });               
+          }
+        },
+        tooltips:{enabled:false},
+        events: ['click'],
+        hover: {animationDuration: 0}  
+    }
+  });
+  }else{
+      this.pieChartArea.data.labels=labels;
+      this.pieChartArea.data.backgroundColor=colors;
+      this.pieChartArea.options.title.text='Classificação Clientes Agrosul - '+this.formGroup.value.agLocationName
+      this.pieChartArea.data.datasets.forEach((dataset) => {
+             dataset.data=data;
+             dataset.backgroundColor=colors;
+      });
+      this.pieChartArea.update();
+    }	
+  }
 
 findChildByValue(brandName,typeMachine){
   var test=0;
@@ -1146,6 +1295,16 @@ findChildByValue(brandName,typeMachine){
       var todos = new AgrosulLocationDTO();
       todos.id='0';
       todos.locationName='Todos';
+      this.agLocation.push(todos);
+      
+      todos = new AgrosulLocationDTO();
+      todos.id='901';
+      todos.locationName='Agrosul 1 - BA/TO';
+      this.agLocation.push(todos);
+
+      todos = new AgrosulLocationDTO();
+      todos.id='902';
+      todos.locationName='Agrosul 2 - PI';
       this.agLocation.push(todos);
     }
 		this.agrosulLocationService.findAllByUserId(userID)

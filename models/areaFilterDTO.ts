@@ -1,7 +1,7 @@
 export class AreaFilterDTO{
     farmAreaType:String;
     agLocationValue:String;
-    agLocationId:number;
+    agLocationId:number[]=[0];
     clientValue:String;
     farmArea:String;
     chartTypeX:String;

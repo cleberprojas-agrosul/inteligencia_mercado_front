@@ -31,7 +31,7 @@ export class MachineBrandService{
         return this.http.get<MachineTypeDTO[]>(`${this.basePath}/brand/getTotalJDxConcorrencia?typeMachine=${typeMachine}&agLocation=${idLocation}`)
     }
 
-    findMachineByBrandAndOwner(owner:String,brandName:String,typeMachine:String,idLocation:number): Observable<MachineModelChartDTO[]>{
+    findMachineByBrandAndOwner(owner:String,brandName:String,typeMachine:String,idLocation:number[]): Observable<MachineModelChartDTO[]>{
         return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/getMachineByBrandAndOwner?typeMachine=${typeMachine}&owner=${owner}&brandName=${brandName}&agLocation=${idLocation}`)
     }
  
