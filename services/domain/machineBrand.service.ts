@@ -35,4 +35,12 @@ export class MachineBrandService{
         return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/getMachineByBrandAndOwner?typeMachine=${typeMachine}&owner=${owner}&brandName=${brandName}&agLocation=${idLocation}`)
     }
  
+    findMachinesByType(typeMachine:String,idLocation:number[]): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByType?typeMachine=${typeMachine}&agLocation=${idLocation}`)
+    }
+
+    findMachinesByYear(typeMachine:String,idLocation:number[],toFindValue:string=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYear?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}`)
+    }
+
 }
