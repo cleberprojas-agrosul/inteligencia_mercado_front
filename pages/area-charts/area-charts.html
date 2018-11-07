@@ -9,7 +9,7 @@
                 <ion-item>
                     <ion-label stacked>Região Agrosul</ion-label>
                         <ion-select multiple="false" formControlName="agLocationValue">
-                        <ion-option *ngFor="let agLoc of agLocation" 
+                        <ion-option *ngFor="let agLoc of agLocation" (ionSelect)="getValueFromLocation(agLoc.locationName)"
                                     value="{{agLoc.id}}" >{{agLoc.locationName}}
                         </ion-option>
                         </ion-select>
@@ -163,7 +163,10 @@
                                 <ion-col>
                                         <ion-input readonly="true" formControlName="sumMaquinasRegiao" type="text"></ion-input>
                                 </ion-col>
-                                <ion-col col-9></ion-col>
+                                <ion-col>
+                                    <ion-input readonly="true" formControlName="pctRegiao" type="text"></ion-input>
+                                </ion-col>
+                                <ion-col col-8></ion-col>
                             </ion-row>
                         </div>
                     </ion-card-content>
@@ -206,7 +209,19 @@
                 </ion-card>
             </ion-col>
     </ion-row>  
-
+    <ion-row>
+            <ion-col col-6>
+               
+            </ion-col>
+            <ion-col col-6>
+                    <ion-card>
+                    <ion-card-content>
+                        <canvas #barCanvasBrandsByYear></canvas>
+                    </ion-card-content>
+                    </ion-card>
+                </ion-col>
+        </ion-row>  
+    
     <ion-row>
         <ion-col>
             <ion-card>
@@ -246,6 +261,9 @@
          [sortType]="'multi'" [reorderable]="reorderable" [headerHeight]="50"   [limit]="20" [footerHeight]="50"  [rowHeight]="'auto'" >
      <ngx-datatable-column name="tipoEquipamento" >
             <ng-template ngx-datatable-header-template>Tipo Máquina</ng-template>
+     </ngx-datatable-column>
+     <ngx-datatable-column name="marca" >
+            <ng-template ngx-datatable-header-template>Marca</ng-template>
      </ngx-datatable-column>
      <ngx-datatable-column  name="brandName" [resizeable]="false">
             <ng-template ngx-datatable-header-template>Modelo</ng-template>

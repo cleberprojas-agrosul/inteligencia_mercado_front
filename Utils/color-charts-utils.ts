@@ -35,6 +35,14 @@ export class ColorChartUtils{
       this.chartColor.set("rgba(8, 117, 12, 0.7)","green");
       this.chartColor.set("#99ff00","soft_green");
       this.chartColor.set("rgb(255, 251, 0)","yellow");
+
+      this.chartColor.set("-99 CV","rgba(8, 117, 12, 0.7)");
+      this.chartColor.set("100 - 200 CV","rgb(255, 251, 0)");
+      this.chartColor.set("200 - 300 CV","#99ff00");
+      this.chartColor.set("300 - 400 CV","rgb(255, 174, 0)");
+      this.chartColor.set("+400 CV","#f94a8f");
+
+
       
   }
   

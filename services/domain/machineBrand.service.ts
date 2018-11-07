@@ -27,7 +27,7 @@ export class MachineBrandService{
         return this.http.get<MachineBrandDTO[]>(`${this.basePath}/brand/findBrandByName?brandName=${brandName}`)
      }
 
-    findConcurrencyByTypeMachine(typeMachine:String[],idLocation:number): Observable<MachineTypeDTO[]>{
+    findConcurrencyByTypeMachine(typeMachine:String[],idLocation:number[]): Observable<MachineTypeDTO[]>{
         return this.http.get<MachineTypeDTO[]>(`${this.basePath}/brand/getTotalJDxConcorrencia?typeMachine=${typeMachine}&agLocation=${idLocation}`)
     }
 
@@ -41,6 +41,18 @@ export class MachineBrandService{
 
     findMachinesByYear(typeMachine:String,idLocation:number[],toFindValue:string=null): Observable<MachineModelChartDTO[]>{
         return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYear?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}`)
+    }
+
+    findMachinesByYearCvRange(typeMachine:String,idLocation:number[],toFindValue:string=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYearCvRange?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}`)
+    }
+
+    findOwnersByYear(typeMachine:String,idLocation:number[],toFindValue:string=null,ano:string=null,chartType:string=null,marca:string=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findOwnersByYear?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}&ano=${ano}&chartType=${chartType}&marca=${marca}`)
+    }
+
+    findOwnersByYearCvRange(typeMachine:String,idLocation:number[],toFindValue:string=null,ano:string=null,chartType:string=null,marca:string=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findOwnersByYearCvRange?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}&ano=${ano}&chartType=${chartType}&marca=${marca}`)
     }
 
 }

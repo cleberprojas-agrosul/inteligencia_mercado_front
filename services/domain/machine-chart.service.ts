@@ -27,7 +27,7 @@ export class MachineChartService{
     }
     
    findByFilters(marcaId:number = null, equipamentoId:number = null, equipamento:String =null,
-                regiaoId:number = null, clientId:number = null,
+                regiaoId:number[] = null, clientId:number = null,
                 concessionaria:String =null,anoModelo:String=null, chartType:String=null,orderType:String=null,lineLimit:number=10  ): Observable<MachineModelChartDTO[]>{
     return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/model/findFilters?marcaId=${marcaId}&equipamentoId=${equipamentoId}&equipamento=${equipamento}&regiaoId=${regiaoId}&clientId=${clientId}&concessionaria=${concessionaria}&ano=${anoModelo}&chartType=${chartType}&orderBy=${orderType}&lineLimit=${lineLimit}`)
    }
