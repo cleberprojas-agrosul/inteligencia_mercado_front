@@ -26,7 +26,6 @@ export class AreaChartService{
     }
 
     listAllSeedTypeByLocation(field:String[],filter:AreaFilterDTO): Observable<AreaChartDTO[]>{
-        console.log(filter);
         return this.http.get<AreaChartDTO[]>(`${this.basePath}/farm/getTotalAreaByCultivType?seedName=${field}&regiao=${filter.agLocationId}&proprietario=${filter.clientValue}&area=${filter.farmArea}&chartType=${filter.chartTypeX}`)
     }
 

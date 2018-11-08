@@ -118,6 +118,7 @@ export class AreaChartsDetailPage {
         sumClientFeijao:[]=[0],
 
         sum:[]=[0],
+        sumNumber:[]=[0],
         sumByLocation:[]=[0],
         sumSoja:[]=[0],
         sumMilho:[]=[0],
@@ -140,7 +141,7 @@ export class AreaChartsDetailPage {
         sumGpPp:[]=[0],
         sumClassTamArea:[]=[0],
         sumClassClienteAgrosul:[]=[0],
-
+        pctRegiao:[]=[0],
         sumMaquinas:[]=[0],
         AllBrands:[]=[""],
         clientName:" ",
@@ -205,28 +206,22 @@ export class AreaChartsDetailPage {
     var fields:String[] = [];
     if(this.formGroup.value.chartTypeX == "getTotalAreaByType"){
       fields = ['areaPropria','areaArrendada']
-      this.createMultiLevelBartChart(fields)
+      this.createMultiLevelBarChart(fields)
     }else {
-         fields = ['Soja','Milho','Algodao','Pecuaria','Feijao','Outros','Cafe','Horti'];
-      this.createMultiLevelBartChart(fields);
+      fields = ['Soja','Milho','Algodao','Pecuaria','Feijao','Outros','Cafe','Horti'];
       this.setDataPieChartAreaTotal(fields)
+      this.createMultiLevelBarChart(fields);
+     
     }
     this.addNew();
 }
 
-createMultiLevelBartChart(fields){
+createMultiLevelBarChart(fields){
     var filter:AreaFilterDTO = new AreaFilterDTO();
-    if( this.formGroup.value.agLocationValue=="901"){
-      filter.agLocationId=[2,3,4,5,6,7,8,9,10,11,12,13,14];
-    }else if(this.formGroup.value.agLocationValue=="902"){
-      filter.agLocationId=[15,16,17];
-    }else{
-      filter.agLocationId = this.formGroup.value.agLocationValue==null?0:this.formGroup.value.agLocationValue;
-    }
+    filter.agLocationId  = this.getRegioes();
     filter.clientValue  = this.formGroup.value.clientValue,
     filter.farmArea  = this.formGroup.value.farmArea,
     filter.chartTypeX = this.formGroup.value.chartTypeX,
-    console.log(filter);
     this.areaChartService.listAllSeedTypeByLocation(fields,filter)
     .subscribe(response=>{
       this.items = response;
@@ -256,27 +251,32 @@ createMultiLevelBartChart(fields){
 					j++;
 					index++;
        });
-       var pieData:number[]=[]
-       var pieLabels:String[]=[];
-       this.formGroup.controls.sum.setValue(this.formatarNumero(sum));
-       var i = 0;
-       map.forEach( (items,key)=>{
-        pieData[i] = items[0];
-        pieLabels[i]=key;   
-        data[i] = {
-					label: key,
-					data:items,
-					backgroundColor:this.color.chartColor.get(key),
-					borderWidth: 0          
-        };
-        this.setCultivTotal(items[0],key);
-				i++
-      });
-      if(this.formGroup.value.chartTypeX == "seedRanking"){
-          this.createPieChart(pieLabels,pieData)
-      }else
-         	 this.createBarChart(label,data);
-    });
+    var pieData:number[]=[]
+    var pieLabels:String[]=[];
+    this.formGroup.controls.sum.setValue(this.formatarNumero(sum));
+    var i = 0;
+    map.forEach( (items,key)=>{
+      pieData[i] = items[0];
+      pieLabels[i]=key;   
+      data[i] = {
+          label: key,
+          data:items,
+          backgroundColor:this.color.chartColor.get(key),
+          borderWidth: 0          
+      };
+      this.setCultivTotal(items[0],key);
+      i++
+   });
+   this.createPieChart(pieLabels,pieData)
+  
+    var totalAg     = sum;
+    var totalRegiao =this.formGroup.value.sumNumber;
+    this.formGroup.controls.sumByLocation.setValue(this.formatarNumero(sum));
+    this.formGroup.controls.sum.setValue(this.formatarNumero(totalRegiao));
+    this.formGroup.controls.pctRegiao.setValue(String(Math.round( (totalAg*100) /totalRegiao )) + "%");
+ });
+
+   
 }
 
 setDataPieChartAreaTotal(fields){
@@ -316,16 +316,17 @@ setDataPieChartAreaTotal(fields){
        });
        var pieData:number[]=[]
        var pieLabels:String[]=[];
-       this.formGroup.controls.sumByLocation.setValue(this.formatarNumero(sum));
+       
+
        var i = 0;
        map.forEach( (items,key)=>{
         pieData[i] = items[0];
         pieLabels[i]=key;   
         this.setCultivTotalByLocation(items[0],key);
 				i++
-      });
+       });
        this.createPieChartAreaTotal(pieLabels,pieData)
-      
+       this.formGroup.controls.sumNumber.setValue(sum);
     });
 }
 
@@ -492,9 +493,6 @@ createPieChart(labels,data1){
                 var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
                 if(!isHidden && percent!='0%')
                   ctx.fillText(percent, model.x + x, model.y + y + 15);
-                // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
-                // Display percent in another line, line break doesn't work for fillText
-               
               }
             });               
           }
@@ -580,6 +578,7 @@ addNew():void{
 		error =>{console.log(error)}
 	);	 	     
  }
+
 createPieChartCompared(labels:String[], data:number[],locationName:String){
 var sumTotal=0
   data.forEach(iten => {
@@ -625,7 +624,6 @@ var sumTotal=0
             ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
-            console.log(this.data)
             this.data.datasets.forEach(function (dataset) {
               for (var i = 0; i < dataset.data.length; i++) {
                 var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
@@ -673,7 +671,6 @@ var sumTotal=0
          var label: String[] = [];
          var data: number[] = [];
          var i=0;
-         console.log(item)
          item.forEach(item=>{
            label[i]= item['area'];
            data[i]=item['quantidade'];
@@ -1041,8 +1038,6 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
                 var e = i[0] ;
                 var brandName = i[0]._chart.config.data.labels[e._index];
                 var machineType = i[0]._model.datasetLabel;
-                //console.log(machineType,brandName);
-                //this.findMachinesByBrand(machineType)
                 this.findChildByValue(brandName,machineType);
               }
             },
@@ -1232,8 +1227,7 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
   }
 
 findChildByValue(brandName,typeMachine){
-  var test=0;
-  //console.log(brandName,typeMachine)
+   var test=0;
    this.lastbrandName=brandName;
    this.lastTypeMachine=typeMachine;
    this.machineBrandService.findBrandByName(brandName)
@@ -1279,7 +1273,6 @@ findChildByValue(brandName,typeMachine){
    
   }
 
-  
   loadSeedType(){
     this.areaChartService.listAllSeedType()
     .subscribe(
@@ -1296,12 +1289,10 @@ findChildByValue(brandName,typeMachine){
       todos.id='0';
       todos.locationName='Todos';
       this.agLocation.push(todos);
-      
       todos = new AgrosulLocationDTO();
       todos.id='901';
       todos.locationName='Agrosul 1 - BA/TO';
       this.agLocation.push(todos);
-
       todos = new AgrosulLocationDTO();
       todos.id='902';
       todos.locationName='Agrosul 2 - PI';
@@ -1369,7 +1360,6 @@ findChildByValue(brandName,typeMachine){
 
   updateFilter(event) {
     const val = event.target.value.toLowerCase();
-    //this.clientList = this.formGroup2.value.clientsValue;
     const temp = this.clientList.filter(function(d) {
       return d.name.toLowerCase().indexOf(val) !== -1 || !val;
     });

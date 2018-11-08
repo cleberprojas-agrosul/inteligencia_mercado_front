@@ -104,7 +104,8 @@ export class AreaChartsPage {
 				farmAreaType:[] =[],
         agLocationValue:[]=[0],
         agLocationName:[]=[""],
-				clientValue:[]=[],
+        clientValue:[]=[],
+        clientTotalMaquinas:[]=[0],
 				farmArea:[]=[],
 				compareData:[] = [],
         chartTypeX:"marca",
@@ -114,14 +115,7 @@ export class AreaChartsPage {
         clientSize:[]=[0],
         areaSize:[]=[0],
         sum:[]=[0],
-        sumSoja:[]=[0],
-        sumMilho:[]=[0],
-        sumAlgodao:[]=[0],
-        sumPecuaria:[]=[0],
-        sumFeijao:[]=[0],
-        sumCafe:[]=[0],
-        sumHorti:[]=[0],
-        sumOutros:[]=[0],
+
         sumMaquinas:[]=[0],
         sumNumberMaquinas:[]=[0],
         sumMaquinasRegiao:[]=[0],
@@ -187,8 +181,10 @@ export class AreaChartsPage {
       ];
   }
 
-submitForm(event): void {
-    this.createMultiLevelBartChart();
+  submitForm(event): void {
+    if(this.barChart == null){
+      this.createMultiLevelBartChart();
+    }
     this.addNew();
 }
 
@@ -252,11 +248,15 @@ setCultivTotal(total:number,key:String){
 }
 
 createPieChart(labels,data1){
-	if(this.barChart == null){
+  var legend:string[]=[""];
+  labels.forEach( function results(e,i){
+      legend[i]=e +': '+ data1[i]                      
+  });
+  if(this.barChart == null){
       this.barChart = new Chart(this.barCanvas.nativeElement, {
       type: 'pie',
       data: {
-        labels: labels,
+        labels: legend,
         datasets: [{
           label: 'Nº Maquinas',
           data: data1,
@@ -285,7 +285,6 @@ createPieChart(labels,data1){
               for (var i = 0; i < dataset.data.length; i++) {
                 var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
                     total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                    //mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
                     mid_radius = model.outerRadius-20,
                     start_angle = model.startAngle,
                     end_angle = model.endAngle,
@@ -297,19 +296,27 @@ createPieChart(labels,data1){
                 var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
                 if(!isHidden && percent!='0%')
                   ctx.fillText(percent, model.x + x, model.y + y + 15);
-                // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
-                // Display percent in another line, line break doesn't work for fillText
-               
               }
             });               
           }
         },
         events: ['click'],
-        hover: {animationDuration: 0}   
-      }	
+        legend: {
+          display: true,
+          position:'left'
+        },
+        hover: {animationDuration: 0},
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data) {
+              return data.labels[tooltipItem.index];
+            }
+          }   
+        },
+     },	
     });
   }else{
-    this.barChart.data.labels=labels;
+    this.barChart.data.labels=legend;
     this.barChart.data.backgroundColor=this.getBackgroundColors(labels);
     this.barChart.data.datasets.forEach((dataset) => {
              dataset.data=data1;
@@ -330,6 +337,10 @@ createBarChart(labels,dataset){
         labels: labels,
         datasets: dataset
       },options:{
+        legend: {
+          display: true,
+          position:'left'
+        },
         title: {
           display: true,
           text: 'Total de Máquinas Região '+this.formGroup.value.agLocationName
@@ -396,21 +407,26 @@ addNew():void{
       });
       this.formGroup.controls.AllBrands.setValue(allBrandsName);
       this.formGroup.controls.sumMaquinasRegiao.setValue(this.formatarNumero(soma));
+      this.createPieChartCompared(label,data);
+      
       var totalAg     = this.formGroup.value.sumNumberMaquinas;
       var totalRegiao =soma;
       this.formGroup.controls.pctRegiao.setValue(String(Math.round( (totalRegiao*100) / totalAg)) + "%");
-      this.createPieChartCompared(label,data);
 		},
 		error =>{console.log(error)}
 	);	 	     
  }
 
  createPieChartCompared(labels:String[], data:number[]){
+  var legend:string[]=[""];
+  labels.forEach( function results(e,i){
+      legend[i]=e +': '+ data[i]                      
+  });
   if(this.pieChartCompared == null){
       this.pieChartCompared = new Chart(this.pieCanvasCompared.nativeElement, {
         type: 'pie',
         data: {
-          labels: labels,
+          labels: legend,
           datasets: [{
             label: 'Nº Maquinas',
             data: data,
@@ -425,7 +441,7 @@ addNew():void{
             var e = i[0] ;
             if(i[0]!=null){
               var brandName=i[0]._chart.config.data.labels[e._index];
-              this.findByValue(brandName);
+              this.findByValue(brandName.slice(0,brandName.indexOf(":")));
             }
         },
         animation: {
@@ -461,12 +477,23 @@ addNew():void{
           }
         },
         events: ['click'],
+        legend: {
+          display: true,
+          position:'right'
+        },
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data) {
+              return data.labels[tooltipItem.index];
+            }
+          }   
+        },
         hover: {animationDuration: 0}  
     }
   });
   }else{
       this.pieChartCompared.options.title.text='Total de Máquinas - '+this.formGroup.value.agLocationName;
-      this.pieChartCompared.data.labels=labels;
+      this.pieChartCompared.data.labels=legend;
       this.pieChartCompared.data.backgroundColor=this.getBackgroundColors(labels);
       this.pieChartCompared.data.datasets.forEach((dataset) => {
              dataset.data=data;
@@ -588,13 +615,13 @@ addNew():void{
             index++;
             soma += element.parqueMaquinas;
           });
-          console.log(toFindValue);
+        
         this.createBarChartMachineByYear(label,data,typeMachine,soma,toFindValue)
         },
       error =>{console.log(error)}
       );
   }else{
-       console.log(toFindValue);
+       
         this.machineBrandService.findMachinesByYear(
           typeMachine.trim(),
           this.getRegioes(),
@@ -619,12 +646,12 @@ addNew():void{
   }
   
 createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:string){
-    var labelColors:String[] =[];
-    var i=0;
-    if(labels!=null)
+   var labelColors:String[] =[];
+   var i=0;
+   if(labels!=null)
       labels.forEach(item=>{ 
-      labelColors[i] = this.color.chartColor.get(clickValue);
-      i++;
+        labelColors[i] = this.color.chartColor.get(clickValue);
+        i++;
       });
    if(this.barChartCompared == null){
        this.barChartCompared = new Chart(this.barCanvasCompared.nativeElement, {
@@ -747,10 +774,12 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
             if(i[0]!=null){
               var e = i[0] ;
               this.clientName = i[0]._chart.config.data.labels[e._index];
+             
               var brandName = i[0]._model.datasetLabel;
               this.formGroup.controls.clientName.setValue(this.clientName);
               this.formGroup.controls.lastbrandName.setValue(this.lastbrandName);
               this.formGroup.controls.lastTypeMachine.setValue(this.lastTypeMachine);
+              
               this.machineBrandService
               .findMachineByBrandAndOwner(
                   this.clientName,
@@ -760,6 +789,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                   ).
                   subscribe(response=>{
                       var detail="";
+                      var somaParque =0;
                       var temp:MachineModelChartDTO[]=[];
                       this.rows = response;
                       var i=0;
@@ -778,9 +808,10 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                           temp[i]=item;
                           temp[i].detailTable = detail; 
                           i++;
+                          somaParque+=item.total;
                       })
                       this.rows=temp;
-                      console.log(this.rows)
+                      this.formGroup.controls.clientTotalMaquinas.setValue(somaParque);
                       this.content.scrollToBottom(500);
                   });
             }
@@ -920,7 +951,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
      }	
   }
 
-  createBarChartBrandsByYear(labels:String[], data:number[],clickValue:string,typeMachine,soma:number){
+  createBarChartBrandsByYear(labels:String[], data:number[],clickValue,typeMachine,soma:number){
     var labelColors:String[] =[];
     var i=0;
     labelColors = this.getBackgroundColors(labels);
@@ -937,17 +968,14 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
             }]
           },options:{
             title: {
-              display: true,
-              text:  typeMachine+' ' +clickValue+ ' '+ anoModelo
+              display: true, 
+              text:  typeMachine+' ' +clickValue+ ' '+this.getDetailByMachineType(typeMachine)+ ' - '+anoModelo
             },
             'onClick': (c,i)=> {
               if(i[0]!=null){
                 var e = i[0] ;
                 var brandName = i[0]._chart.config.data.labels[e._index];
                 this.findOwnersByFilters(brandName);
-                //this.findChildByValue(brandName,machineType)
-                
-                
               }
             },
             "animation": {
@@ -997,7 +1025,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
       this.barChartBrandsByYear.data.labels=labels;
       this.barChartBrandsByYear.data.backgroundColor=labelColors;
       this.barChartBrandsByYear.options.scales.xAxes[0].scaleLabel.labelString = this.getDetailByMachineType(clickValue);
-      this.barChartBrandsByYear.options.title.text=  typeMachine+' ' +clickValue+ ' '+ anoModelo
+      this.barChartBrandsByYear.options.title.text=  clickValue+ ' '+this.getDetailByMachineType(typeMachine)+ ' - '+anoModelo
       var i = this.barChartBrandsByYear.data.datasets.length;
       var dt = {
                   label: 'Clientes',
@@ -1006,7 +1034,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                 };
       this.barChartBrandsByYear.data.datasets.forEach((dataset) => {
               dataset.data=data;
-              dataset.label=clickValue;
+              dataset.label=typeMachine;
               dataset.backgroundColor=labelColors;
           });
       this.barChartBrandsByYear.update();
@@ -1031,7 +1059,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
           },options:{
             title: {
               display: true,
-              text: 'Total de Máquinas  '+clickValue
+              text: 'Total de Máquinas  '+clickValue+' ' +soma
             },
             'onClick': (c,i)=> {
               if(i[0]!=null){
@@ -1085,7 +1113,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
       this.barChartMachineByBrand.data.labels=labels;
       this.barChartMachineByBrand.data.backgroundColor=labelColors;
       this.barChartMachineByBrand.options.scales.xAxes[0].scaleLabel.labelString = this.getDetailByMachineType(clickValue);
-      this.barChartMachineByBrand.options.title.text= 'Total de Máquinas  '+clickValue
+      this.barChartMachineByBrand.options.title.text=  'Total de Máquinas  '+clickValue+' ' +soma
       var i = this.barChartMachineByBrand.data.datasets.length;
       var dt = {
                   label: 'Clientes',
@@ -1119,7 +1147,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
           },options:{
             title: {
               display: true,
-              text: +clickValue +'-' +prevClickValue+' '+this.getDetailByMachineType(clickValue)
+              text: clickValue +'-' +prevClickValue+' '+this.getDetailByMachineType(clickValue)
             },
             'onClick': (c,i)=> {
               if(i[0]!=null){
@@ -1177,7 +1205,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
       this.barChartMachineByYear.data.labels=labels;
       this.barChartMachineByYear.data.backgroundColor=labelColors;
       this.barChartMachineByYear.options.scales.xAxes[0].scaleLabel.labelString = this.getDetailByMachineType(clickValue);
-      this.barChartMachineByYear.options.title.text= 'Total  Por Ano '+clickValue +'-' +prevClickValue+' '+this.getDetailByMachineType(clickValue)
+      this.barChartMachineByYear.options.title.text= clickValue +'-' +prevClickValue+' '+this.getDetailByMachineType(clickValue)
       var i = this.barChartMachineByYear.data.datasets.length;
       var dt = {
                   label: 'Clientes',
@@ -1233,7 +1261,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
                   data2[i] =0;    
               i++;
             })
-            
+            console.log(resp)
             this.createBarChartCompared(label,data,data2,clickValue);
           });
         }else
@@ -1249,7 +1277,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
   localStorage.setItem('anoModelo',anoModelo);
   localStorage.setItem('typeMachine',typeMachine);
   localStorage.setItem('especificacao',prevClickValue)
-  console.log("findBrandsbyYearMachine "+ anoModelo,typeMachine,prevClickValue);
+  
     if(typeMachine.trim()=='Trator'){
       this.machineBrandService
       .findOwnersByYearCvRange(
@@ -1298,6 +1326,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
 
  findOwnerbyYearMachine(anoModelo,typeMachine,especificacao,brandName){
     this.lastbrandName="";
+    console.log(anoModelo,typeMachine,especificacao,brandName)
     if(typeMachine.trim()=='Trator'){
       this.machineBrandService
       .findOwnersByYearCvRange(
@@ -1309,6 +1338,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
         brandName
         ).subscribe(
           response=>{
+           
           this.machineItems = response;
           var label: String[] = [];
           var data: number[] = [];
@@ -1331,6 +1361,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
         brandName
         ).subscribe(
           response=>{
+            console.log(response)
           this.machineItems = response;
           var label: String[] = [];
           var data: number[] = [];
@@ -1359,7 +1390,6 @@ findChildByValue(brandName,typeMachine){
    this.machineBrandService.findBrandByName(brandName)
     .subscribe(item=>{
       this.machineBrandId= item['id'];
-        
       this.machineChartService.findByFilters(
       this.machineBrandId,
         0,
@@ -1537,7 +1567,7 @@ findChildByValue(brandName,typeMachine){
   }
 
   getDetailByMachineType(clickValue){
-    console.log(clickValue)
+    
      if(clickValue.trim() == 'Trator')
       return ' CV '
      else if(clickValue.trim() == 'Plantadeira')
@@ -1551,7 +1581,7 @@ findChildByValue(brandName,typeMachine){
    }
 
   onChange(ev: any) {
-    console.log('Changed', ev._valA);
+    
     this.formGroup.controls.lower.setValue(ev._valA);
     this.formGroup.controls.upper.setValue(ev._valB);
   }
