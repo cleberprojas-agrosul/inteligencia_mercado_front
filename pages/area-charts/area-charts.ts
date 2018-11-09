@@ -408,7 +408,7 @@ addNew():void{
       this.formGroup.controls.AllBrands.setValue(allBrandsName);
       this.formGroup.controls.sumMaquinasRegiao.setValue(this.formatarNumero(soma));
       this.createPieChartCompared(label,data);
-      
+
       var totalAg     = this.formGroup.value.sumNumberMaquinas;
       var totalRegiao =soma;
       this.formGroup.controls.pctRegiao.setValue(String(Math.round( (totalRegiao*100) / totalAg)) + "%");
@@ -813,6 +813,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                       this.rows=temp;
                       this.formGroup.controls.clientTotalMaquinas.setValue(somaParque);
                       this.content.scrollToBottom(500);
+                     
                   });
             }
           }, 
@@ -1067,8 +1068,9 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
                 var brandName = i[0]._chart.config.data.labels[e._index];
                 var machineType = i[0]._model.datasetLabel;
                 this.findChildByValue(brandName,machineType)
-                this.content.scrollToBottom(800);
-                
+                var posX = this.barCanvasDetailOwner.nativeElement.getBoundingClientRect().bottom
+                var posY = this.barCanvasMachinesByBrand.nativeElement.getBoundingClientRect().top
+                this.content.scrollTo(500,posX+posY,800)
               }
             },
             "animation": {

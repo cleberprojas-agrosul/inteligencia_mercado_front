@@ -138,6 +138,17 @@ export class AreaChartsDetailPage {
         sumHortiLocal:[]=[0],
         sumOutrosLocal:[]=[0],
 
+
+        pctSoja:[]=[0],
+        pctMilho:[]=[0],
+        pctAlgodao:[]=[0],
+        pctPecuaria:[]=[0],
+        pctFeijao:[]=[0],
+        pctCafe:[]=[0],
+        pctHorti:[]=[0],
+        pctOutros:[]=[0],
+
+
         sumGpPp:[]=[0],
         sumClassTamArea:[]=[0],
         sumClassClienteAgrosul:[]=[0],
@@ -265,6 +276,7 @@ createMultiLevelBarChart(fields){
           borderWidth: 0          
       };
       this.setCultivTotal(items[0],key);
+      
       i++
    });
    this.createPieChart(pieLabels,pieData)
@@ -274,6 +286,7 @@ createMultiLevelBarChart(fields){
     this.formGroup.controls.sumByLocation.setValue(this.formatarNumero(sum));
     this.formGroup.controls.sum.setValue(this.formatarNumero(totalRegiao));
     this.formGroup.controls.pctRegiao.setValue(String(Math.round( (totalAg*100) /totalRegiao )) + "%");
+    
  });
 
    
@@ -351,6 +364,30 @@ setCultivTotalByLocation(total:number,key:String){
 }
 
 setCultivTotal(total:number,key:String){
+  if(key=='Soja'){
+     this.formGroup.controls.sumSoja.setValue(this.formatarNumero(total));
+    // var sojaT = this.formGroup.value.sumSojaLocal;
+     //var pct =  this.formatarNumero(Math.round((total*100)/sojaT)) +"%";
+     //String(Math.round( (totalAg*100) /totalRegiao )) + "%"
+     //this.formGroup.controls.pctSoja.setValue(pct);
+  }else   if(key=='Milho'){
+     this.formGroup.controls.sumMilho.setValue(this.formatarNumero(total));
+  }else   if(key=='Algodao'){
+     this.formGroup.controls.sumAlgodao.setValue(this.formatarNumero(total));
+  }else   if(key=='Feijao'){
+     this.formGroup.controls.sumFeijao.setValue(this.formatarNumero(total));
+  }else   if(key=='Pecuaria'){
+     this.formGroup.controls.sumPecuaria.setValue(this.formatarNumero(total));
+  }else   if(key=='Outros'){
+     this.formGroup.controls.sumOutros.setValue(this.formatarNumero(total));
+  }else   if(key=='Cafe'){
+     this.formGroup.controls.sumCafe.setValue(this.formatarNumero(total));
+  }else{   
+     this.formGroup.controls.sumHorti.setValue(this.formatarNumero(total));
+  }
+}
+
+setPctCultivTotal(total:number,key:String){
   if(key=='Soja')
      this.formGroup.controls.sumSoja.setValue(this.formatarNumero(total));
   else   if(key=='Milho')
