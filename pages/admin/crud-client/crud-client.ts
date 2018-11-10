@@ -9,13 +9,6 @@ import { ClientService } from '../../../services/domain/client.service';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { WorkMachineService } from '../../../services/domain/workMachine.service';
 
-/**
- * Generated class for the CrudClientPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-crud-client',

@@ -14,10 +14,8 @@
   <ion-content padding>
    
       <form  [formGroup]="formGroup">
-        
           <ion-card>
           <ion-grid>
-            
               <ion-list *ngFor="let client of agClients">
                   <ion-row>
                   <ion-col>
@@ -49,35 +47,26 @@
                     </ion-col> 
                   </ion-row>
                 <ion-card>
+                  <ion-row >
+                    <ion-col style="background-color: rgb(187, 250, 187); text-align: center;font-weight: bold"> 
+                        Fazendas
+                    </ion-col>
+                  </ion-row>
+                  <ion-row >
+                        <ion-col>
+                        <ion-label stacked> Nome </ion-label>
+                        </ion-col> 
+                        <ion-col>
+                            <ion-label stacked> Localização </ion-label>
+                        </ion-col> 
+                        <ion-col>
+                            <ion-label stacked> Area: Total - Produtiva </ion-label>
+                        </ion-col>      
+                  </ion-row>
                 <ion-list *ngFor="let farm of client.farms; first as isFirst;index as i">
-                  <ion-row >
-                     <ion-col style="background-color: rgb(187, 250, 187); text-align: center;font-weight: bold"> 
-                      Fazendas
-                     </ion-col>
-                  </ion-row>
-                  <ion-row >
-                      <ion-col>
-                      <ion-label stacked> Nome </ion-label>
-                      </ion-col> 
-                      <ion-col>
-                          <ion-label stacked> Localização </ion-label>
-                      </ion-col> 
-                      <ion-col>
-                          <ion-label stacked> Area - Ha</ion-label>
-                      </ion-col> 
-                      <ion-col>
-                          <ion-label stacked> Tipo - Ha</ion-label>
-                      </ion-col>      
-                      <ion-col>
-                          <ion-label stacked> Cultivo - Ha </ion-label>
-                      </ion-col>
-                      <ion-col>
-                          <ion-label stacked> Area: Total - Produtiva </ion-label>
-                      </ion-col>      
-                  </ion-row>
                   <ion-row>
                     <ion-col>
-                    <ion-item>
+                    <ion-item class="gridFarmClass" >
                         <ion-input readonly="true"
                              formControlName="farmsDetailName"
                               value="{{farm.farmName}}"
@@ -93,40 +82,6 @@
                         </ion-input>
                      </ion-item>
                     </ion-col>
-                    
-                    <ion-col>
-                        <ion-list *ngFor="let area of farm.farmAreas">
-                          <ion-item>
-                              <ion-input readonly="true"
-                                    value="{{area.farmAreaType.typeName}} - {{area.totalArea}}"
-                                        type="text">
-                              </ion-input>
-                            </ion-item>
-                        </ion-list>
-                    </ion-col>
-  
-                    <ion-col>
-                        <ion-list *ngFor="let farmFields of farm.farmFields">
-                          <ion-item>
-                              <ion-input readonly="true"
-                                    value="{{farmFields.farmFielType.typeName}} - {{farmFields.totalAreaType}}"
-                                        type="text">
-                              </ion-input>
-                            </ion-item>
-                        </ion-list>
-                    </ion-col>
-  
-                    <ion-col>
-                        <ion-list *ngFor="let cultiv of farm.farmCultivAreas">
-                          <ion-item *ngIf="cultiv.harvestNum ==1">
-                              <ion-input readonly="true"
-                                    value="{{cultiv.farmSeed.seedName}} - {{cultiv.totalAreaSeed}}"
-                                        type="text">
-                              </ion-input>
-                            </ion-item>
-                        </ion-list>
-                    </ion-col>
-  
                     <ion-col>
                         <ion-item>
                           <ion-input readonly="true"
@@ -136,118 +91,12 @@
                        </ion-item>
                     </ion-col>
                   </ion-row>
-  
-                   <ion-row>
-                      <ion-col style="background-color: rgb(187, 250, 187); text-align: center;font-weight: bold"> 
-                            Parque de Máquinas
-                       </ion-col>
-                   </ion-row>
-                   <ion-row>
-                       <ion-col>
-                           <ion-label stacked> Marca </ion-label>
-                       </ion-col> 
-                       <ion-col>
-                           <ion-label stacked> Concessionária </ion-label>
-                       </ion-col>
-                       <ion-col>
-                           <ion-label stacked> Tipo </ion-label>
-                       </ion-col> 
-                       <ion-col>
-                           <ion-label stacked> Modelo </ion-label>
-                       </ion-col> 
-                      <ion-col>
-                              <ion-label stacked> Ano </ion-label>
-                      </ion-col> 
-                      <ion-col>
-                              <ion-label stacked> Quantidade </ion-label>
-                       </ion-col> 
-                       <ion-col>
-                          <ion-label stacked> Editar </ion-label>
-                      </ion-col> 
-                   </ion-row>
-                <!--   <ion-row >
-                      <ion-col>
-                          <input  type='text'  style='width:100%;'
-                          placeholder='Digite para buscar...' (keyup)='updateFilter($event,i)'/>
-                      </ion-col> 
-                      <ion-col>
-                          <input  type='text'  style='width:100%;'
-                          placeholder='Digite para buscar...' (keyup)='updateFilter($event,i)'/>
-                      </ion-col> 
-                      <ion-col>
-                          <input  type='text'  style='width:100%;'
-                          placeholder='Digite para buscar...' (keyup)='updateFilter($event,i)'/>
-                      </ion-col> 
-                      <ion-col>
-                              
-                      </ion-col> 
-                  </ion-row> -->
-                   <ion-list  *ngFor="let machine of agFarms[i].workMachines">
-                     <ion-row class="item-list">
-                       <ion-col class="col">
-                       <ion-item > 
-                           <ion-input readonly="true"
-                                 value="{{machine.machineModel.machineBrand.name}}"
-                                     type="text">
-                           </ion-input>
-                       </ion-item>
-                       </ion-col>
-                       <ion-col>
-                         <ion-item>
-                           <ion-input readonly="true"
-                                 value="{{machine.name}}"
-                                     type="text">
-                           </ion-input>
-                        </ion-item>
-                       </ion-col>
-                       <ion-col>
-                           <ion-item>
-                             <ion-input readonly="true"
-                                   value="{{machine.typeMachine.typeName}}"
-                                       type="text">
-                             </ion-input>
-                          </ion-item>
-                       </ion-col>
-                       <ion-col>
-                           <ion-item>
-                             <ion-input readonly="true"
-                                   value="{{machine.machineModel.name}}"
-                                       type="text">
-                             </ion-input>
-                          </ion-item>
-                       </ion-col>
-                       <ion-col>
-                              <ion-item>
-                                <ion-input readonly="true"
-                                      value="{{machine.machineYear}}"
-                                          type="text">
-                                </ion-input>
-                             </ion-item>
-                      </ion-col>
-                      <ion-col>
-                              <ion-item>
-                                <ion-input readonly="true"
-                                      value="{{machine.machineQtd}}"
-                                          type="text">
-                                </ion-input>
-                             </ion-item>
-                      </ion-col>
-                      <ion-col>
-                          <ion-item>
-                              <button ion-button (click)="irEditar(machine)">Ir</button>
-                         </ion-item>
-                  </ion-col>
-                     </ion-row>
-                   </ion-list>
-                   <button ion-button (click)="showValue(client)">OK</button>
-                 </ion-list>
-              </ion-card>
-  
-              </ion-list>
-              
-          </ion-grid>
-      </ion-card>
-     </form>
+            </ion-list>
+        </ion-card>
+      </ion-list>
+   </ion-grid>
+   </ion-card>
+</form>
   
   
       
