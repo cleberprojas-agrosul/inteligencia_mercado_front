@@ -1,0 +1,105 @@
+<ion-header>
+    <ion-navbar color="secondary">
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title style="color:gold" >Editar Fazenda </ion-title>
+      <ion-buttons end>
+          <button ion-button > VOLTAR</button>
+      </ion-buttons>
+    </ion-navbar>
+  </ion-header>
+
+
+<ion-content padding>
+    <form  [formGroup]="formGroup">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+                <ion-label>Fazenda</ion-label>
+                <ion-input type="text" formControlName="farmName" name="title"></ion-input>
+             </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+                <ion-label>Telefone</ion-label>
+                <ion-input type="text" formControlName="phoneNumber" name="title"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+                <ion-label>Email</ion-label>
+                <ion-input type="text" formControlName="clientEmail" name="title"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+              <ion-item>
+                  <ion-label>Observação</ion-label>
+                  <ion-input type="text" formControlName="generalObs" name="title"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                  <ion-label>Área Total</ion-label>
+                  <ion-input type="text" formControlName="totalArea" name="title"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+            <ion-item>
+                <ion-label>Área Produtiva</ion-label>
+                <ion-input type="text" formControlName="totalAreaType" name="title"></ion-input>
+            </ion-item>
+          </ion-col>
+       </ion-row>
+
+       <ion-row>
+          <ion-col>
+           <ion-card>
+               <ion-row> 
+                 <ion-col>
+                  <ion-select multiple="false" formControlName="farmFieldsToEdit" >
+                      <ion-option selected="true"  *ngFor="let ffield of this.selectIn"  
+                                    value="{{ffield.farmFielType.id}}" >{{ffield.farmFielType.typeName}}
+                      </ion-option>
+                  </ion-select>
+                 </ion-col>
+                 <ion-col>
+                    <ion-item>
+                        <ion-input type="text" formControlName="ffEditTotalAreaType" name="title"></ion-input>
+                    </ion-item>
+                 </ion-col>
+                 <ion-col>
+                    <button ion-button round small outline (click)="updateFarmField()"  >+</button>
+                </ion-col>
+               </ion-row>
+               
+                
+                <ion-list *ngFor="let ffield of this.formGroup.value.farmFields">
+                  <ion-row> 
+                  <ion-col>
+                      <ion-item>
+                          <ion-input type="text" formControlName="farmFieldsTypeName" value="{{ffield.farmFielType.typeName}}" name="title"></ion-input>
+                      </ion-item>
+                  </ion-col>
+                  <ion-col>
+                      <ion-item>
+                          <ion-input type="text" formControlName="farmFieldsTotalAreaType" value="{{ffield.totalAreaType}}"name="title"></ion-input>
+                      </ion-item>
+                   </ion-col>
+                  <ion-col>
+                      <button ion-button round small outline  (click)="loadSelectF(ffield)">Editar</button>
+                  </ion-col>
+                </ion-row>
+                </ion-list>
+                 
+            </ion-card>
+
+          </ion-col>
+          
+     </ion-row>
+      </ion-grid>
+    </form>
+</ion-content>

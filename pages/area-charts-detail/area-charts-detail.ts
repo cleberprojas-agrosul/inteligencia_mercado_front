@@ -645,7 +645,7 @@ var sumTotal=0
             var e = i[0] ;
             if(i[0]!=null){
               this.porteCliente=i[0]._chart.config.data.labels[e._index];
-              this.defineTypeClient(this.porteCliente);
+              this.findByValue(this.porteCliente, this.classPorCor);
             }
         },
         animation: {
@@ -703,7 +703,7 @@ var sumTotal=0
     this.areaChartService.getAreasByFilters(
       this.getRegioes(),
       porteCliente,
-      classPorCor
+      null
      ).subscribe(item=>{
          var label: String[] = [];
          var data: number[] = [];
@@ -743,27 +743,15 @@ var sumTotal=0
               position:'right'
             },
             'onClick': (c,i)=> {
+
+            
               var e = i[0] ;
               var label:string[]=[];
               var data:number[]=[];
               var index=0;
               if(i[0]!=null){
                 var tamanhoArea=i[0]._chart.config.data.labels[e._index];
-                this.areaChartService.getProprietariosByTamanhoAreaCultura(
-                  this.getRegioes(),
-                  this.porteCliente,
-                  tamanhoArea,
-                  this.classPorCor
-                  ).subscribe(response=>{
-                      response.forEach(element => {
-                      var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
-                      label[index] = element['proprietario'];
-                      data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
-                      index++;
-                    });
-                    this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea);
-                  })
-               
+                this.defineTypeClient(this.porteCliente,tamanhoArea);
               }
           },
           animation: {
@@ -1146,11 +1134,13 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
     return regioes;
   }
  
-  defineTypeClient(porteCliente){
+  defineTypeClient(porteCliente,tamArea){
     var agClientClassification:AgrosulClassificationDTO[];
+    localStorage.setItem('tamArea',tamArea);
     this.clientService.findClientsByColorClass(
       this.getRegioes(),
-      porteCliente).subscribe(response=>{
+      porteCliente,tamArea
+      ).subscribe(response=>{
         agClientClassification =  response
         var label: String[] = [];
         var data: number[] = [];
@@ -1205,10 +1195,23 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
             var data:number[]=[];
             var index=0;
             if(i[0]!=null){
-              var tamanhoArea=i[0]._chart.config.data.labels[e._index];
+              var tamanhoArea=localStorage.getItem('tamArea');
               var classColor =i[0]._chart.config.data.datasets["0"].backgroundColor[e._index];
               this.classPorCor = this.color.chartColor.get(classColor)
-              this.findByValue(this.porteCliente, this.classPorCor);
+              this.areaChartService.getProprietariosByTamanhoAreaCultura(
+                this.getRegioes(),
+                this.porteCliente,
+                tamanhoArea,
+                this.classPorCor
+                ).subscribe(response=>{
+                    response.forEach(element => {
+                    var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
+                    label[index] = element['proprietario'];
+                    data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
+                    index++;
+                  });
+                  this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea);
+                })
             }
         },
         animation: {

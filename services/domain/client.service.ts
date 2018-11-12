@@ -47,8 +47,8 @@ export class ClientService{
         return this.http.get<ClientDTO[]>(`${this.basePath}/client/findClientByMultipleLocationAndPorte?regiao=${regiao}&porte=${porte}`)
     }
 
-    findClientsByColorClass(regiao:number[],porte:String): Observable<AgrosulClassificationDTO[]>{
-        return this.http.get<AgrosulClassificationDTO[]>(`${this.basePath}/client/findClientsByColorClass?regiao=${regiao}&porte=${porte}`)
+    findClientsByColorClass(regiao:number[],porte:String,tamArea:String): Observable<AgrosulClassificationDTO[]>{
+        return this.http.get<AgrosulClassificationDTO[]>(`${this.basePath}/client/findClientsByColorClass?regiao=${regiao}&porte=${porte}&tamArea=${tamArea}`)
     }
     
 }

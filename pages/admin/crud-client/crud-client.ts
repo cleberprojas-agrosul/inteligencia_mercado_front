@@ -177,4 +177,11 @@ export class CrudClientPage {
     console.log($event)
   }  
 
+  editFarm(farm:FarmsDTO){
+    var toEdit : FarmsDTO[] =[farm];
+    var data = { selectedFarm :toEdit };
+    this.navCtrl.push("CrudFarmPage",data);
+    
+  }
+
 }
