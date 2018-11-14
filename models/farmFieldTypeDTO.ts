@@ -1,4 +1,4 @@
-export interface FarmFieldTypeDTO{
+export class FarmFieldTypeDTO{
     id   : string;
     typeName : string;
 }

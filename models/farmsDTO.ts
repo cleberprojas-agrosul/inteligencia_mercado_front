@@ -1,6 +1,8 @@
 import { AgrosulLocationDTO } from "./agrosulLocationDTO";
 import { FarmFieldDTO } from "./farmFieldDTO";
 import { WorkMachineDTO } from "./workMachineDTO";
+import { FarmCultivAreaDTO } from "./farmCultivAreaDTO";
+import { FarmAreaDTO } from "./farmAreaDTO";
 
 export interface FarmsDTO{
     id: string,
@@ -17,9 +19,8 @@ export interface FarmsDTO{
     totalArea : number
     agrosulLocation:AgrosulLocationDTO;
     farmFields:FarmFieldDTO[];
-    farmCultivAreas:{totalAreaSeed:number,harvestNum:number,
-                    farmSeed:{seedName:String}}[];
-    farmAreas:{totalArea:number,farmAreaType:{typeName:String }}[];   
+    farmCultivAreas:FarmCultivAreaDTO[];
+    farmAreas:FarmAreaDTO[];   
     workMachines:WorkMachineDTO[];
 
     

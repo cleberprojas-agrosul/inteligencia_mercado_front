@@ -37,7 +37,7 @@
         </ion-row>
         <ion-row>
             <ion-col>
-                    <button [disabled]="!isenabled" ion-button block (click)="submitForm($event)">Filtrar</button>
+                <button [disabled]="!isenabled" ion-button block (click)="submitForm($event)">Filtrar</button>
             </ion-col>
             <ion-col col-9>
             </ion-col>
@@ -58,71 +58,80 @@
         <ion-row >
                 <ion-label >Soja (Ha)</ion-label>
                 <ion-input readonly="true" formControlName="sumSojaLocal" type="text"></ion-input> 
-                <ion-col col-8></ion-col> 
+                <ion-col col-5></ion-col> 
                 <ion-label >Soja (Ha)</ion-label>
                 <ion-input readonly="true" formControlName="sumSoja" type="text"></ion-input>    
+                <ion-input readonly="true" formControlName="pctSoja" type="text"></ion-input>    
                 
         </ion-row>
     
         <ion-row >
             <ion-label stacked>Milho (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumMilhoLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Milho (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumMilho" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctMilho" type="text"></ion-input>    
         </ion-row>
 
         <ion-row >
             <ion-label stacked>Algodão (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumAlgodaoLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Algodão (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumAlgodao" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctAlgodao" type="text"></ion-input>    
         </ion-row>
 
         <ion-row >
             <ion-label stacked>Feijão (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumFeijaoLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Feijão (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumFeijao" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctFeijao" type="text"></ion-input>    
         </ion-row>
 
         <ion-row>
             <ion-label stacked>Pecuaria (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumPecuariaLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Pecuaria (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumPecuaria" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctPecuaria" type="text"></ion-input>    
         </ion-row>
 
         <ion-row>
             <ion-label stacked>Café (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumCafeLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Café (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumCafe" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctCafe" type="text"></ion-input>    
         </ion-row>
 
         <ion-row>
             <ion-label stacked>Hortifruti (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumHortiLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Hortifruti (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumHorti" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctHorti" type="text"></ion-input>    
         </ion-row>
         <ion-row>
             <ion-label stacked>Outros (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumOutrosLocal" type="text"></ion-input>
-            <ion-col col-8></ion-col> 
+            <ion-col col-5></ion-col> 
             <ion-label stacked>Outros (Ha)</ion-label>
             <ion-input readonly="true" formControlName="sumOutros" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="pctOutros" type="text"></ion-input>    
         </ion-row> 
     </div>
    <ion-row >
         <ion-col col-6 >
             <ion-card>
                 <ion-card-content>
+                
                     <canvas #pieCanvasLocation></canvas>
                 </ion-card-content>
             </ion-card>
@@ -172,8 +181,8 @@
                 </ion-card-content>
             </ion-card>
          </ion-col >
-    </ion-row >  
-    <ion-row >
+    </ion-row>  
+    <ion-row>
             <ion-col col-6>
             </ion-col>
             <ion-col col-6 >

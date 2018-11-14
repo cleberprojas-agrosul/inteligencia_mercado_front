@@ -85,7 +85,14 @@ export class AreaChartsDetailPage {
   clientName:string=""
   porteCliente:string="";
   classPorCor: String="";
-
+  sumSojaNumber     = 0;
+  sumMilhoNumber    = 0;
+  sumAlgodaoNumber  = 0;
+  sumPecuariaNumber = 0;
+  sumFeijaoNumber   = 0;
+  sumCafeNumber     = 0;
+  sumHortiNumber    = 0;
+  sumOutrosNumber   = 0;
 
   constructor(
      public modalCtrl : ModalController,
@@ -221,7 +228,7 @@ export class AreaChartsDetailPage {
     }else {
       fields = ['Soja','Milho','Algodao','Pecuaria','Feijao','Outros','Cafe','Horti'];
       this.setDataPieChartAreaTotal(fields)
-      this.createMultiLevelBarChart(fields);
+     
      
     }
     this.addNew();
@@ -329,8 +336,6 @@ setDataPieChartAreaTotal(fields){
        });
        var pieData:number[]=[]
        var pieLabels:String[]=[];
-       
-
        var i = 0;
        map.forEach( (items,key)=>{
         pieData[i] = items[0];
@@ -340,51 +345,68 @@ setDataPieChartAreaTotal(fields){
        });
        this.createPieChartAreaTotal(pieLabels,pieData)
        this.formGroup.controls.sumNumber.setValue(sum);
+       this.createMultiLevelBarChart(fields);
     });
 }
 
 setCultivTotalByLocation(total:number,key:String){
-  if(key=='Soja')
+  if(key=='Soja'){
+     this.sumSojaNumber = total;
      this.formGroup.controls.sumSojaLocal.setValue(this.formatarNumero(total));
-  else   if(key=='Milho')
+  }else   if(key=='Milho'){
+     this.sumMilhoNumber = total;
      this.formGroup.controls.sumMilhoLocal.setValue(this.formatarNumero(total));
-  else   if(key=='Algodao')
+  }else   if(key=='Algodao'){
+     this.sumAlgodaoNumber = total;
      this.formGroup.controls.sumAlgodaoLocal.setValue(this.formatarNumero(total));
-  else   if(key=='Feijao')
+  }else   if(key=='Feijao'){
+     this.sumFeijaoNumber = total;
      this.formGroup.controls.sumFeijaoLocal.setValue(this.formatarNumero(total));
-  else   if(key=='Pecuaria')
+  }else   if(key=='Pecuaria'){
+     this.sumPecuariaNumber = total;
      this.formGroup.controls.sumPecuariaLocal.setValue(this.formatarNumero(total));
-  else   if(key=='Outros')
+  }else   if(key=='Outros'){
+     this.sumOutrosNumber = total;
      this.formGroup.controls.sumOutrosLocal.setValue(this.formatarNumero(total));
-  else   if(key=='Cafe')
+}else   if(key=='Cafe'){
+     this.sumCafeNumber = total;
      this.formGroup.controls.sumCafeLocal.setValue(this.formatarNumero(total));
-  else   
+ }else{
+     this.sumHortiNumber = total;
      this.formGroup.controls.sumHortiLocal.setValue(this.formatarNumero(total));
-
+ }
 }
 
-setCultivTotal(total:number,key:String){
+setCultivTotal(regiao:number,key:String){
   if(key=='Soja'){
-     this.formGroup.controls.sumSoja.setValue(this.formatarNumero(total));
-    // var sojaT = this.formGroup.value.sumSojaLocal;
-     //var pct =  this.formatarNumero(Math.round((total*100)/sojaT)) +"%";
-     //String(Math.round( (totalAg*100) /totalRegiao )) + "%"
-     //this.formGroup.controls.pctSoja.setValue(pct);
+     this.formGroup.controls.sumSoja.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctSoja.setValue(this.calcPct(regiao, this.sumSojaNumber));
   }else   if(key=='Milho'){
-     this.formGroup.controls.sumMilho.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumMilho.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctMilho.setValue(this.calcPct(regiao, this.sumMilhoNumber));
   }else   if(key=='Algodao'){
-     this.formGroup.controls.sumAlgodao.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumAlgodao.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctAlgodao.setValue(this.calcPct(regiao, this.sumAlgodaoNumber));
   }else   if(key=='Feijao'){
-     this.formGroup.controls.sumFeijao.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumFeijao.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctFeijao.setValue(this.calcPct(regiao, this.sumFeijaoNumber));
   }else   if(key=='Pecuaria'){
-     this.formGroup.controls.sumPecuaria.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumPecuaria.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctPecuaria.setValue(this.calcPct(regiao, this.sumPecuariaNumber));
   }else   if(key=='Outros'){
-     this.formGroup.controls.sumOutros.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumOutros.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctOutros.setValue(this.calcPct(regiao, this.sumOutrosNumber));
   }else   if(key=='Cafe'){
-     this.formGroup.controls.sumCafe.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumCafe.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctCafe.setValue(this.calcPct(regiao, this.sumCafeNumber));
   }else{   
-     this.formGroup.controls.sumHorti.setValue(this.formatarNumero(total));
+     this.formGroup.controls.sumHorti.setValue(this.formatarNumero(regiao));
+     this.formGroup.controls.pctHorti.setValue(this.calcPct(regiao, this.sumHortiNumber));
   }
+}
+
+calcPct(totalRegiao, totalAgrosul){
+    return  this.formatarNumero(Math.round((totalRegiao*100)/totalAgrosul)) +"%";
 }
 
 setPctCultivTotal(total:number,key:String){
@@ -444,7 +466,6 @@ createPieChartAreaTotal(labels,data1){
               for (var i = 0; i < dataset.data.length; i++) {
                 var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
                     total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                    //mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
                     mid_radius = model.outerRadius-20,
                     start_angle = model.startAngle,
                     end_angle = model.endAngle,
@@ -456,9 +477,6 @@ createPieChartAreaTotal(labels,data1){
                 var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
                 if(!isHidden && percent!='0%')
                   ctx.fillText(percent, model.x + x, model.y + y + 15);
-                // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
-                // Display percent in another line, line break doesn't work for fillText
-               
               }
             });               
           }
@@ -475,7 +493,6 @@ createPieChartAreaTotal(labels,data1){
              dataset.backgroundColor=this.getBackgroundColors(labels);
      });
     this.pieChartLocation.update();
-    
   }
   return this.pieChartLocation;
 }
@@ -1264,7 +1281,7 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
       });
       this.pieChartArea.update();
     }	
-  }
+}
 
 findChildByValue(brandName,typeMachine){
    var test=0;
@@ -1383,7 +1400,6 @@ findChildByValue(brandName,typeMachine){
      this.clientService.findAllFarmsByAgLocation(this.formGroup.value.agLocationValue,
             0)
 			.subscribe(response=>{
-        
         this.formGroup2.controls.clientsValue.setValue(response);
         this.clientList = response;
         this.formGroup2.controls.typeClientValue.setValue(response[0].typeClient.typeName);

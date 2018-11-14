@@ -10,7 +10,6 @@
     </ion-navbar>
   </ion-header>
 
-
 <ion-content padding>
     <form  [formGroup]="formGroup">
       <ion-grid>
@@ -56,50 +55,82 @@
        </ion-row>
 
        <ion-row>
-          <ion-col>
+          <ion-col col-4>
            <ion-card>
-               <ion-row> 
-                 <ion-col>
-                  <ion-select multiple="false" formControlName="farmFieldsToEdit" >
-                      <ion-option selected="true"  *ngFor="let ffield of this.selectIn"  
-                                    value="{{ffield.farmFielType.id}}" >{{ffield.farmFielType.typeName}}
-                      </ion-option>
-                  </ion-select>
-                 </ion-col>
-                 <ion-col>
-                    <ion-item>
-                        <ion-input type="text" formControlName="ffEditTotalAreaType" name="title"></ion-input>
-                    </ion-item>
-                 </ion-col>
-                 <ion-col>
-                    <button ion-button round small outline (click)="updateFarmField()"  >+</button>
-                </ion-col>
-               </ion-row>
-               
-                
-                <ion-list *ngFor="let ffield of this.formGroup.value.farmFields">
+                <ion-list *ngFor="let ffield of this.listFarmField;index as i">
                   <ion-row> 
                   <ion-col>
-                      <ion-item>
-                          <ion-input type="text" formControlName="farmFieldsTypeName" value="{{ffield.farmFielType.typeName}}" name="title"></ion-input>
-                      </ion-item>
+                     <ion-select class="edit-select" multiple="false" >
+                        <ion-option  *ngFor="let farmFielType of this.farmFields"   (ionSelect)="onfarmFielTypeChange(farmFielType,ffield.totalAreaType)" 
+                                        [selected]="farmFielType.id == ffield.farmFielType.id"  value="{{farmFielType.id}}" >{{farmFielType.typeName}}
+                         </ion-option>
+                     </ion-select>
                   </ion-col>
                   <ion-col>
-                      <ion-item>
-                          <ion-input type="text" formControlName="farmFieldsTotalAreaType" value="{{ffield.totalAreaType}}"name="title"></ion-input>
-                      </ion-item>
-                   </ion-col>
+                    <ion-item>
+                      <ion-input type="text" formControlName="farmFieldsTotalAreaType" value="{{ffield.totalAreaType}}"name="title"></ion-input>
+                    </ion-item>
+                  </ion-col>
                   <ion-col>
-                      <button ion-button round small outline  (click)="loadSelectF(ffield)">Editar</button>
+                    <button ion-button round small outline  (click)="updateFarmField(ffield)">Editar</button>
                   </ion-col>
                 </ion-row>
                 </ion-list>
-                 
             </ion-card>
-
           </ion-col>
-          
-     </ion-row>
+          <ion-col col-4>
+                <ion-card>
+                     <ion-list *ngFor="let farmCultiv of this.listFarmCultiv;index as i">
+                       <ion-row> 
+                       <ion-col>
+                          <ion-select class="edit-select" multiple="false" >
+                             <ion-option  *ngFor="let seed of this.farmSeeds" 
+                                         [selected]="seed.id == farmCultiv.farmSeed.id"    
+                                          value="{{seed.id}}" >{{seed.seedName}}
+                              </ion-option>
+                          </ion-select>
+                       </ion-col>
+                       <ion-col>
+                         <ion-item>
+                           <ion-input type="text" formControlName="farmCATotalAreaSeed" value="{{farmCultiv.totalAreaSeed}}"name="title"></ion-input>
+                         </ion-item>
+                       </ion-col>
+                       <ion-col>
+                         <button ion-button round small outline  (click)="updateCultivArea(farmCultiv)">Editar</button>
+                       </ion-col>
+                     </ion-row>
+                     </ion-list>
+              </ion-card>
+          </ion-col>
+          <ion-col col-4>
+            <ion-card>
+                 <ion-list *ngFor="let farmArea of this.listFarmAreas;index as i">
+                   <ion-row> 
+                   <ion-col>
+                      <ion-select class="edit-select" multiple="false" >
+                         <ion-option *ngFor="let areaType of this.farmAreas" 
+                                     [selected]="areaType.id == farmArea.farmAreaType.id"    
+                                     value="{{areaType.id}}" >{{areaType.typeName}}
+                         </ion-option>
+                      </ion-select>
+                   </ion-col>
+                   <ion-col>
+                     <ion-item>
+                       <ion-input type="text" formControlName="fATotalArea" value="{{farmArea.totalArea}}"name="title"></ion-input>
+                     </ion-item>
+                   </ion-col>
+                   <ion-col>
+                     <button ion-button round small outline  (click)="updateFarmArea(farmArea)">Editar</button>
+                   </ion-col>
+                 </ion-row>
+                 </ion-list>
+          </ion-card>
+      </ion-col>
+       </ion-row>
+       <ion-col col-4>
+            <button ion-button round small outline  (click)="saveData()">Salvar</button>
+      </ion-col>
       </ion-grid>
+      
     </form>
 </ion-content>
