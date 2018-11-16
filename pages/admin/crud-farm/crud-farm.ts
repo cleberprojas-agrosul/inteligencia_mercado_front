@@ -8,6 +8,7 @@ import { FarmCultivAreaDTO } from '../../../models/farmCultivAreaDTO';
 import { FarmSeedDTO } from '../../../models/farmSeedDTO';
 import { FarmAreaDTO } from '../../../models/farmAreaDTO';
 import { FarmAreaTypeDTO } from '../../../models/farmAreaTypeDTO';
+import { WorkMachineDTO } from '../../../models/workMachineDTO';
 
 /**
  * Generated class for the CrudFarmPage page.
@@ -28,9 +29,12 @@ export class CrudFarmPage {
   listFarmField:FarmFieldDTO[] = [];
   listFarmCultiv:FarmCultivAreaDTO[] = [];
   listFarmAreas:FarmAreaDTO[] = [];
+  listWorkMachines:WorkMachineDTO[] = [];
+
   farmFields:FarmFieldTypeDTO[] = [];
   farmSeeds:FarmSeedDTO[] = [];
   farmAreas:FarmAreaTypeDTO[] = [];
+
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public formBuiler:FormBuilder ) {
@@ -103,7 +107,6 @@ export class CrudFarmPage {
   }
 
   ionViewDidLoad() {
-
     this.loadFieldType();
     this.loadSeeds();
     this.agFarms = this.navParams.get('selectedFarm');
@@ -150,7 +153,10 @@ export class CrudFarmPage {
     });    
     
    // Work Machines - Parque de maquinas
-   this.agFarms[0].workMachines.forEach(wm=>{
+   this.formGroup.controls.workMachines.setValue(this.agFarms[0].workMachines)
+   this.listWorkMachines = this.agFarms[0].workMachines;
+   console.log( this.listWorkMachines)
+   this.listWorkMachines.forEach(wm=>{
    });
   }
 
@@ -175,7 +181,13 @@ export class CrudFarmPage {
     farmArea.farmAreaType =  this.formGroup.value.fATotalArea;
     this.listFarmAreas.push(farmArea);
     
-}
+  }
+
+  goUpdateWorkMachine(workMachine){
+    var toEdit : WorkMachineDTO[] =[workMachine];
+    var data = { selectedMachine :toEdit };
+    this.navCtrl.push("CrudWorkMachinePage",data)
+  }
 
   /*updateFarmField(){
     this.formGroup.controls.farmFieldsTotalAreaType.setValue(this.formGroup.value.ffEditTotalAreaType);

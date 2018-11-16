@@ -55,7 +55,32 @@
        </ion-row>
 
        <ion-row>
+
           <ion-col col-4>
+              <ion-card>
+                   <ion-list *ngFor="let farmArea of this.listFarmAreas;index as i">
+                     <ion-row> 
+                     <ion-col>
+                        <ion-select class="edit-select" multiple="false" >
+                           <ion-option *ngFor="let areaType of this.farmAreas" 
+                                       [selected]="areaType.id == farmArea.farmAreaType.id"    
+                                       value="{{areaType.id}}" >{{areaType.typeName}}
+                           </ion-option>
+                        </ion-select>
+                     </ion-col>
+                     <ion-col>
+                       <ion-item>
+                         <ion-input type="text" formControlName="fATotalArea" value="{{farmArea.totalArea}}"name="title"></ion-input>
+                       </ion-item>
+                     </ion-col>
+                     <ion-col>
+                       <button ion-button round small outline  (click)="updateFarmArea(farmArea)">Editar</button>
+                     </ion-col>
+                   </ion-row>
+                   </ion-list>
+            </ion-card>
+        </ion-col>
+        <ion-col col-4>
            <ion-card>
                 <ion-list *ngFor="let ffield of this.listFarmField;index as i">
                   <ion-row> 
@@ -102,31 +127,48 @@
                      </ion-list>
               </ion-card>
           </ion-col>
-          <ion-col col-4>
-            <ion-card>
-                 <ion-list *ngFor="let farmArea of this.listFarmAreas;index as i">
-                   <ion-row> 
-                   <ion-col>
-                      <ion-select class="edit-select" multiple="false" >
-                         <ion-option *ngFor="let areaType of this.farmAreas" 
-                                     [selected]="areaType.id == farmArea.farmAreaType.id"    
-                                     value="{{areaType.id}}" >{{areaType.typeName}}
-                         </ion-option>
-                      </ion-select>
-                   </ion-col>
-                   <ion-col>
-                     <ion-item>
-                       <ion-input type="text" formControlName="fATotalArea" value="{{farmArea.totalArea}}"name="title"></ion-input>
-                     </ion-item>
-                   </ion-col>
-                   <ion-col>
-                     <button ion-button round small outline  (click)="updateFarmArea(farmArea)">Editar</button>
-                   </ion-col>
-                 </ion-row>
-                 </ion-list>
-          </ion-card>
-      </ion-col>
+          
        </ion-row>
+
+       <ion-row>
+          <ion-col>
+              <ion-card>
+                   <ion-list *ngFor="let machine of this.listWorkMachines;index as i">
+                     <ion-row> 
+                     <ion-col>
+                       <ion-item>
+                         <ion-input type="text" formControlName="wmMachineBrandName" value="{{machine.machineModel.machineBrand.name}}" name="title"></ion-input>
+                       </ion-item>
+                     </ion-col>
+                     <ion-col>
+                        <ion-item>
+                          <ion-input type="text" formControlName="wmTypeMachineName" value="{{machine.typeMachine.typeName}}" name="title"></ion-input>
+                        </ion-item>
+                     </ion-col>
+                     <ion-col>
+                        <ion-item>
+                          <ion-input type="text" formControlName="wmMachineModelName" value="{{machine.machineModel.name}}" name="title"></ion-input>
+                        </ion-item>
+                     </ion-col>
+                     <ion-col>
+                        <ion-item>
+                          <ion-input type="text" formControlName="wmMachineYear" value="{{machine.machineYear}}" name="title"></ion-input>
+                        </ion-item>
+                     </ion-col>
+                     <ion-col>
+                        <ion-item>
+                          <ion-input type="text" formControlName="wmTypeMachineTotal" value="{{machine.machineQtd}}" name="title"></ion-input>
+                        </ion-item>
+                     </ion-col>
+                     <ion-col>
+                       <button ion-button round small outline (click)="goUpdateWorkMachine(machine)" >Editar</button>
+                     </ion-col>
+                   </ion-row>
+                   </ion-list>
+            </ion-card>
+        </ion-col>
+       </ion-row>
+
        <ion-col col-4>
             <button ion-button round small outline  (click)="saveData()">Salvar</button>
       </ion-col>

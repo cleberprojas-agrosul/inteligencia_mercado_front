@@ -45,5 +45,8 @@ export class AreaChartService{
         return this.http.get<AreaChartDTO[]>(`${this.basePath}/farm/getProprietariosByTamanhoAreaCultura?regiaoAgrosul=${agLocationValue}&tamanhoTpCultura=${tamanhoPorCultura}&tamanhoTpArea=${tamanhoTpArea}&classPorCor=${classPorCor}`)
     }
     
+    getTotalAreaCultivGP(agLocationValue:number[]=null,tamanhoPorCultura:string=null): Observable<AreaChartDTO[]>{
+        return this.http.get<AreaChartDTO[]>(`${this.basePath}/farm/getTotalAreaCultivGP?regiaoAgrosul=${agLocationValue}&tamanhoTpCultura=${tamanhoPorCultura}`)
+    }
     
 }
