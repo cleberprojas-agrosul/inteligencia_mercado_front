@@ -97,6 +97,8 @@ export class AreaChartsDetailPage {
   sumCafeNumber     = 0;
   sumHortiNumber    = 0;
   sumOutrosNumber   = 0;
+  totalAreaPP       = 0;
+  totalAreaGP       = 0;
 
   constructor(
      public modalCtrl : ModalController,
@@ -150,6 +152,7 @@ export class AreaChartsDetailPage {
         sumOutrosLocal:[]=[0],
 
 
+
         pctSoja:[]=[0],
         pctMilho:[]=[0],
         pctAlgodao:[]=[0],
@@ -161,6 +164,8 @@ export class AreaChartsDetailPage {
 
 
         sumGpPp:[]=[0],
+        sumGP:[]=[0],
+        sumPP:[]=[0],
         sumClassTamArea:[]=[0],
         sumClassClienteAgrosul:[]=[0],
         sumClassClienteAgrosulTotal:[]=[0],
@@ -170,51 +175,7 @@ export class AreaChartsDetailPage {
         clientName:" ",
         lastbrandName:"",
         lastTypeMachine:"",
-      });
-
-      this.formGroup2 = formBuiler.group({
-        clientsValue:[]=[0],
-        typeClientValue:[]=[0],
-        farms:[]=[0],
-        farmsDetail:[]=[0],
-        farmsDetailName:[] = [],
-        farmsLocation:[] = [],
-        
-        clientPhoneNumber:[] = [],
-        clientObs:[] = [],
-
-        agAgrosulLocation:[] = [0],
-
-        farmFields:[] =[],
-        farmsFieldName:[] = [],
-        farmsFieldTotalArea:[] = [],
-
-        farmAreas:[] =[0],
-        farmAreaType:[] = [0],
-        farmAreaTotal:[] = [0],
-
-        farmCultivAreas:[] =[0],
-        farmSeed:[] = [0],
-        farmTotalAreaSeed:[] = [0],
-        farmHarvestNum:[] = [0],
-
-        workMachines:[] =[0],
-        machineModel:[] = [0],
-        machineBrand:[] = [0],
-        machineBrandId:[] = [0],
-        machineQtd:[] = [0],
-
-        concessionaria:[]=[0],
-        typeMachine:[] = [0],
-        cottonType:[] = [0],
-        harvesterFeet:[] = [0],
-        harvesterHeadType:[] = [0],
-        planterBetweenLines:[] = [0],
-        planterLineNumbers:[] = [0],
-        solidDistVolume:[] = [0],
-        sprayerBarLength:[] = [0],
-        tractorHorsePower:[] = [0],
-      });
+      });      
       
       this.columns = [
         { prop: 'id' },
@@ -233,10 +194,10 @@ export class AreaChartsDetailPage {
     }else {
       fields = ['Soja','Milho','Algodao','Pecuaria','Feijao','Outros','Cafe','Horti'];
       this.setDataPieChartAreaTotal(fields)
-     
-     
     }
     this.addNew();
+    this.generateAreaTable("GP");
+    this.generateAreaTable("PP");
 }
 
 createMultiLevelBarChart(fields){
@@ -634,10 +595,12 @@ addNew():void{
  }
 
 createPieChartCompared(labels:String[], data:number[],locationName:String){
-var sumTotal=0
+  var sumTotal=0
   data.forEach(iten => {
     sumTotal+= iten;
   });
+  console.log(this.totalAreaGP)
+  console.log(this.totalAreaPP)
   this.formGroup.controls.sumGpPp.setValue(sumTotal);
   if(this.pieChartCompared == null){
       this.pieChartCompared = new Chart(this.pieCanvasCompared.nativeElement, {
@@ -664,7 +627,7 @@ var sumTotal=0
               this.porteCliente=i[0]._chart.config.data.labels[e._index];
               this.findByValue(this.porteCliente, this.classPorCor);
               this.defineTypeClientTotal(this.porteCliente);
-              this.generateAreaTable(this.porteCliente);
+              //this.generateAreaTable(this.porteCliente);
             }
         },
         animation: {
@@ -734,12 +697,18 @@ var sumTotal=0
   } 
 
   generateAreaTable(porteCliente){
-    console.log(porteCliente)
     this.areaChartService.getTotalAreaCultivGP(
       this.getRegioes(),
       porteCliente
     ).subscribe(response=>{
-        console.log(response)
+      console.log(response)
+       if(porteCliente=="GP"){
+          this.totalAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
+          this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP) )
+       }else{
+          this.totalAreaPP = response[0]["totalHorti"]+response[0]["totalPecuaria"]+response[0]["totalOutros"]+response[0]["totalCafe"];
+          this.formGroup.controls.sumPP.setValue(this.formatarNumero(this.totalAreaPP) )
+       }
     });
   }
   

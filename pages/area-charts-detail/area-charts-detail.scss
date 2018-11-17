@@ -9,8 +9,6 @@ page-area-charts-detail {
     .item-list .col{
         padding: 0%;
         margin: 0%;
-        
-                
     }
     
     .ngx-datatable.bootstrap .datatable-body .datatable-body-row.datatable-row-even{
@@ -45,7 +43,13 @@ page-area-charts-detail {
 
     .itemTotalDisplayCard{
         font-weight: bolder;
-        font-size:medium;
+        font-size:medium;        
+    }
+
+    .displayinnerAreaInfo .row{
+        padding: 0%;
+        margin: 0%;
+        height:30px;
     }
 
 }
