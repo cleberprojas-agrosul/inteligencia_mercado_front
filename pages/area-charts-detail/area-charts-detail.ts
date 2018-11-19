@@ -79,6 +79,8 @@ export class AreaChartsDetailPage {
   items :  AreaChartDTO[]  = [];
   color:ColorChartUtils ;
   mapTpSeed:Map<String,number[]> = new Map<String,number[]>();
+  mapMachinePotLocal:Map<String,number> = new Map<String,number>();
+  mapMachinePot:Map<String,number> = new Map<String,number>();
   isenabled:boolean=false;
   machineItems : MachineModelChartDTO[] = [];
   machineBrandId:any=0;
@@ -99,6 +101,7 @@ export class AreaChartsDetailPage {
   sumOutrosNumber   = 0;
   totalAreaPP       = 0;
   totalAreaGP       = 0;
+  totalAlgodaoArea  = 0;
 
   constructor(
      public modalCtrl : ModalController,
@@ -151,8 +154,6 @@ export class AreaChartsDetailPage {
         sumHortiLocal:[]=[0],
         sumOutrosLocal:[]=[0],
 
-
-
         pctSoja:[]=[0],
         pctMilho:[]=[0],
         pctAlgodao:[]=[0],
@@ -162,6 +163,29 @@ export class AreaChartsDetailPage {
         pctHorti:[]=[0],
         pctOutros:[]=[0],
 
+        sumPotTratorLocal:[]=[0],
+        sumPotPlantLocal:[]=[0],
+        sumPotColheLocal:[]=[0],
+        sumPotPulvLocal:[]=[0],
+        sumPotCottonLocal:[]=[0],
+
+        sumPotTrator:[]=[0],
+        sumPotPlant:[]=[0],
+        sumPotColhe:[]=[0],
+        sumPotPulv:[]=[0],
+        sumPotCotton:[]=[0],
+
+        inTratorLocal:[]=[""],
+        inColheLocal:[]=[""],
+        inPlantLocal:[]=[""],
+        inPulvLocal:[]=[""],
+        inCottonLocal:[]=[""],
+
+        inTrator:[]=[""],
+        inColhe:[]=[""],
+        inPlant:[]=[""],
+        inPulv:[]=[""],
+        inCotton:[]=[""],
 
         sumGpPp:[]=[0],
         sumGP:[]=[0],
@@ -182,8 +206,6 @@ export class AreaChartsDetailPage {
         { name: 'name' },
         { name: 'isClienteAgrosul' }
       ];
-      //local= {id:string='';l};
-      //this.agLocation.push() 
   }
 
   submitForm(event): void {
@@ -196,8 +218,9 @@ export class AreaChartsDetailPage {
       this.setDataPieChartAreaTotal(fields)
     }
     this.addNew();
-    this.generateAreaTable("GP");
-    this.generateAreaTable("PP");
+    this.generateAreaProdInfo("GP");
+    this.generateAreaProdInfo("PP");
+    this.generateTableAreaInfo();
 }
 
 createMultiLevelBarChart(fields){
@@ -525,7 +548,6 @@ createPieChart(labels,data1){
              dataset.backgroundColor=this.getBackgroundColors(labels);
      });
     this.barChart.update();
-    
   }
   return this.barChart;
 }
@@ -555,11 +577,11 @@ createBarChart(labels,dataset){
                   barPercentage: 0.6
                 }],
           yAxes: [{
-            ticks: {
-                beginAtZero: true
-            }
-        }]
-            }
+                ticks: {
+                    beginAtZero: true
+                  }
+                }]
+        }
       }	
     });
   }else{
@@ -599,8 +621,6 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
   data.forEach(iten => {
     sumTotal+= iten;
   });
-  console.log(this.totalAreaGP)
-  console.log(this.totalAreaPP)
   this.formGroup.controls.sumGpPp.setValue(sumTotal);
   if(this.pieChartCompared == null){
       this.pieChartCompared = new Chart(this.pieCanvasCompared.nativeElement, {
@@ -627,7 +647,6 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
               this.porteCliente=i[0]._chart.config.data.labels[e._index];
               this.findByValue(this.porteCliente, this.classPorCor);
               this.defineTypeClientTotal(this.porteCliente);
-              //this.generateAreaTable(this.porteCliente);
             }
         },
         animation: {
@@ -696,7 +715,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
      });
   } 
 
-  generateAreaTable(porteCliente){
+  generateAreaProdInfo(porteCliente){
     this.areaChartService.getTotalAreaCultivGP(
       this.getRegioes(),
       porteCliente
@@ -704,6 +723,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
       console.log(response)
        if(porteCliente=="GP"){
           this.totalAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
+          this.totalAlgodaoArea = response[0]["totalAlgodao"];
           this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP) )
        }else{
           this.totalAreaPP = response[0]["totalHorti"]+response[0]["totalPecuaria"]+response[0]["totalOutros"]+response[0]["totalCafe"];
@@ -711,6 +731,54 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
        }
     });
   }
+
+  generateTableAreaInfo(){
+    var machines = ['Trator','Colheitadeira','Plantadeira','Pulverizador','Cotton']
+    machines.forEach(typeMachine=>{
+      this.machineBrandService.findMachinesByType(
+        typeMachine.trim(),
+        this.getRegioes()
+      ).subscribe(response=>{
+        var sPotMachine=0
+        let machineItems : MachineModelChartDTO[] =  response;
+        machineItems.forEach(machine=>{
+          var attribToMesure = +machine.clientName;
+          if(typeMachine.trim() == "Trator"){
+            if(attribToMesure >= 200){
+               sPotMachine += attribToMesure * machine.parqueMaquinas;
+            }
+          }else if(typeMachine.trim() == "Cotton"){
+               sPotMachine  += machine.parqueMaquinas;
+          }else{
+            sPotMachine += attribToMesure * machine.parqueMaquinas;
+          }
+          this.mapMachinePotLocal.set(typeMachine,sPotMachine);
+        })
+        this.processMachineLocalData();
+      });
+    });
+  }
+
+  processMachineLocalData(){
+    this.mapMachinePotLocal.forEach( (iten,key)=>{
+      var avg = (this.totalAreaGP/iten).toFixed(2);
+      if(key =="Trator"){
+        this.formGroup.controls.inTratorLocal.setValue(avg)
+      }else if(key =="Pulverizador"){
+        this.formGroup.controls.inPulvLocal.setValue(avg)
+      }else if(key =="Colheitadeira"){
+        this.formGroup.controls.inColheLocal.setValue(avg)
+      }else if(key =="Plantadeira"){
+        this.formGroup.controls.inPlantLocal.setValue(avg)
+      }else if(key =="Cotton"){
+        this.formGroup.controls.inCottonLocal.setValue((this.totalAlgodaoArea/iten).toFixed(2))
+      } 
+    })
+  }
+
+ /************* 
+ TODO Criar processo cenario com todas as regioes
+ *************/
   
   createPieChartTamanhoArea(labels:String[], data:number[]){
     var sumTotal=0
@@ -1313,7 +1381,7 @@ if(this.pieChartAreaTotal == null){
         },
         legend: {
           display: true,
-          position:'right'
+          position:'left'
         },
         'onClick': (c,i)=> {
           var e = i[0] ;

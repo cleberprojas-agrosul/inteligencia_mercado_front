@@ -86,6 +86,9 @@ export class AreaChartsPage {
   rows: MachineModelChartDTO[]=[]; 
   clientName:String=""
   listAno: String[] = [];
+  totalAreaGP:number = 0;
+  totalAreaAlgodao:number = 0;
+  somaCvGp:number =0;
 
 
   constructor(
@@ -119,6 +122,9 @@ export class AreaChartsPage {
         sumMaquinas:[]=[0],
         sumNumberMaquinas:[]=[0],
         sumMaquinasRegiao:[]=[0],
+        sumGP:[]=[0],
+        sumPotMachine:[]=[0],
+        mediaMaquinaGp:[]=[0],
         AllBrands:[]=[""],
         clientName:" ",
         lastbrandName:"",
@@ -186,6 +192,18 @@ export class AreaChartsPage {
       this.createMultiLevelBartChart();
     }
     this.addNew();
+    this.generateAreaTotal("GP");
+}
+
+generateAreaTotal(porteCliente){
+  this.areaChartService.getTotalAreaCultivGP(
+    this.getRegioes(),
+    porteCliente
+  ).subscribe(response=>{
+    console.log(response)
+        this.totalAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
+        this.totalAreaAlgodao = response[0]["totalAlgodao"];
+  });
 }
 
 createMultiLevelBartChart(){
@@ -329,53 +347,6 @@ createPieChart(labels,data1){
 }
 
 
-createBarChart(labels,dataset){
-	if(this.barChart == null){
-      this.barChart = new Chart(this.barCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: dataset
-      },options:{
-        legend: {
-          display: true,
-          position:'left'
-        },
-        title: {
-          display: true,
-          text: 'Total de Máquinas Região '+this.formGroup.value.agLocationName
-        },
-        responsive: true,
-        maintainAspectRatio: true,
-        scales: {
-          xAxes: [{
-                ticks: {
-                    autoSkip: false,
-                    maxRotation: 90,
-                    minRotation: 90,
-                    padding: 0
-                  },
-                  barPercentage: 0.6
-                }],
-          yAxes: [{
-            ticks: {
-                beginAtZero: true
-            }
-        }]
-            }
-      }	
-    });
-  }else{
-    this.barChart.data.labels=labels;
-    this.barChart.data.datasets=dataset;
-    this.barChart.data.options.title.text='Total de Máquinas Região '+this.formGroup.value.agLocationName;
-    this.barChart.type='bar';
-    this.barChart.update();
-  }
-  return this.barChart;
-}
-
-
 addNew():void{
   this.isenabled=true;
   this.machineChartService.findByFilters(
@@ -442,6 +413,7 @@ addNew():void{
             if(i[0]!=null){
               var brandName=i[0]._chart.config.data.labels[e._index];
               this.findByValue(brandName.slice(0,brandName.indexOf(":")));
+              this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP));
             }
         },
         animation: {
@@ -516,9 +488,11 @@ addNew():void{
          var index = 0;
          var soma=0;
          var totalByFamily = 0;
+         var sPotMachine = 0
+         var totalArea = this.totalAreaGP;
          var mapCvFamily:Map<String,number> = new Map<String,number>();
          this.machineItems.forEach(element => {
-           if( typeMachine.trim() =='Trator'){
+           if( typeMachine.trim() == 'Trator'){
               var valorCV = +element.clientName;
               if(valorCV <= 99){
                   labelName="-99 CV"
@@ -526,15 +500,18 @@ addNew():void{
               }else if(valorCV > 99 && valorCV <200){
                   labelName="100 - 200 CV"
                   dataValue = element.parqueMaquinas;
-              }else if(valorCV > 200 && valorCV < 300){
+              }else if(valorCV >= 200 && valorCV < 300){
                   labelName="200 - 300 CV"
                   dataValue = element.parqueMaquinas;
-              }else if(valorCV > 300 && valorCV < 400){
+                  sPotMachine +=valorCV * dataValue;
+              }else if(valorCV >= 300 && valorCV < 400){
                   labelName="300 - 400 CV"
                   dataValue = element.parqueMaquinas;
-              }else if( valorCV > 400){
+                  sPotMachine +=valorCV * dataValue;
+              }else if( valorCV >= 400){
                   labelName="+400 CV"
                   dataValue = element.parqueMaquinas;
+                  sPotMachine +=valorCV * dataValue;
               }
               if( mapCvFamily.get(labelName)!= undefined && mapCvFamily.get(labelName)>0 ){
                    totalByFamily = mapCvFamily.get(labelName);
@@ -549,7 +526,13 @@ addNew():void{
             data[index]  = element.parqueMaquinas;
             index++;
             soma += element.parqueMaquinas;
-           }
+            if( typeMachine.trim() == 'Cotton'){
+              totalArea = this.totalAreaAlgodao;
+              sPotMachine  += element.parqueMaquinas;
+            }else{
+              sPotMachine += (+element.clientName * element.parqueMaquinas) ;
+            }
+          }
          });
          var i = 0;
          if(mapCvFamily.size>0){
@@ -559,8 +542,11 @@ addNew():void{
               i++;
             })
          }
+         var media = totalArea/sPotMachine;
+         this.somaCvGp = media;
+         this.formGroup.controls.mediaMaquinaGp.setValue(this.formatarNumero(media.toFixed(2)));
+         this.formGroup.controls.sumPotMachine.setValue(this.formatarNumero(sPotMachine));
          this.createBarChartDetail(label,data,typeMachine,soma);
-    
        },
       error =>{console.log(error)}
      );
@@ -678,8 +664,9 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
               var e = i[0] ;
               var machineType = i[0]._chart.config.data.labels[e._index];
               var brandName = i[0]._model.datasetLabel;
-              this.findMachinesByBrand(machineType)
-              this.findMachinesByType(machineType)
+              this.findMachinesByBrand(machineType);
+              this.findMachinesByType(machineType);
+
             }
         },
         "animation": {
@@ -1251,7 +1238,6 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
           index++;
           soma += element.parqueMaquinas;
         });
-
         if(clickValue=='John Deere'){
           var i=0;
           this.machineBrandService.findConcurrencyByTypeMachine(label,this.getRegioes())

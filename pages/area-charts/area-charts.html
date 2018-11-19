@@ -180,6 +180,14 @@
             <ion-card-content>
             <canvas #barCanvasCompared></canvas>
             </ion-card-content>
+            <ion-row>
+                <ion-col>
+                    <ion-label stacked>Total Ha</ion-label>
+                </ion-col>
+                <ion-col>
+                    <ion-input readonly="true" formControlName="sumGP" type="text"></ion-input>
+                </ion-col>
+            </ion-row>
         </ion-card>
         </ion-col>
 
@@ -188,6 +196,24 @@
             <ion-card-content>
             <canvas #barCanvasDetail></canvas>
           </ion-card-content>
+          <ion-row>
+                <ion-col>
+                    <ion-label stacked>Total</ion-label>
+                </ion-col>
+                <ion-col>
+                    <ion-input readonly="true" formControlName="sumPotMachine" type="text"></ion-input>
+                </ion-col>
+                <ion-col col-5>
+                </ion-col>
+                <ion-col>
+                    <ion-label stacked>Média p/ Ha</ion-label>
+                </ion-col>
+                <ion-col>
+                    <ion-input readonly="true" formControlName="mediaMaquinaGp" type="text"></ion-input>
+                </ion-col>
+
+            </ion-row>
+        
           </ion-card>
         </ion-col>
         
