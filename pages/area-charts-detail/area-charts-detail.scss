@@ -50,6 +50,29 @@ page-area-charts-detail {
         padding: 0%;
         margin: 0%;
         height:30px;
+    }   
+
+    .displayTableCard {
+        border-bottom-color: black;
+        border-style: solid;
+        border-bottom-width: 1px;
+        margin-bottom: 0px;
+        padding-bottom: 5%;
+        border-width:thin; 
     }
+    .displayTableCard .row{
+        height:30px;
+        padding: 0%;
+        padding-bottom: 5%;
+    }
+    .displayTableCard .label{
+       font-size: 1.4rem;
+       font-weight: bold;
+    }
+    .displayTableCard .text-input-md{
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+  
 
 }

@@ -27,24 +27,24 @@ export class MachineBrandService{
         return this.http.get<MachineBrandDTO[]>(`${this.basePath}/brand/findBrandByName?brandName=${brandName}`)
      }
 
-    findConcurrencyByTypeMachine(typeMachine:String[],idLocation:number[]): Observable<MachineTypeDTO[]>{
-        return this.http.get<MachineTypeDTO[]>(`${this.basePath}/brand/getTotalJDxConcorrencia?typeMachine=${typeMachine}&agLocation=${idLocation}`)
+    findConcurrencyByTypeMachine(typeMachine:String[],idLocation:number[],anoModelo:String[]=null): Observable<MachineTypeDTO[]>{
+        return this.http.get<MachineTypeDTO[]>(`${this.basePath}/brand/getTotalJDxConcorrencia?typeMachine=${typeMachine}&agLocation=${idLocation}&anoModelo=${anoModelo}`)
     }
 
     findMachineByBrandAndOwner(owner:String,brandName:String,typeMachine:String,idLocation:number[]): Observable<MachineModelChartDTO[]>{
         return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/getMachineByBrandAndOwner?typeMachine=${typeMachine}&owner=${owner}&brandName=${brandName}&agLocation=${idLocation}`)
     }
  
-    findMachinesByType(typeMachine:String,idLocation:number[]): Observable<MachineModelChartDTO[]>{
-        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByType?typeMachine=${typeMachine}&agLocation=${idLocation}`)
+    findMachinesByType(typeMachine:String,idLocation:number[],anoModelo:String[]=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByType?typeMachine=${typeMachine}&agLocation=${idLocation}&anoModelo=${anoModelo}`)
     }
 
-    findMachinesByYear(typeMachine:String,idLocation:number[],toFindValue:string=null): Observable<MachineModelChartDTO[]>{
-        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYear?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}`)
+    findMachinesByYear(typeMachine:String,idLocation:number[],toFindValue:string=null,anoModelo:String[]=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYear?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}&anoModelo=${anoModelo}`)
     }
 
-    findMachinesByYearCvRange(typeMachine:String,idLocation:number[],toFindValue:string=null): Observable<MachineModelChartDTO[]>{
-        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYearCvRange?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}`)
+    findMachinesByYearCvRange(typeMachine:String,idLocation:number[],toFindValue:string=null,anoModelo:String[]=null): Observable<MachineModelChartDTO[]>{
+        return this.http.get<MachineModelChartDTO[]>(`${this.basePath}/brand/findMachinesByYearCvRange?typeMachine=${typeMachine}&agLocation=${idLocation}&toFindValue=${toFindValue}&anoModelo=${anoModelo}`)
     }
 
     findOwnersByYear(typeMachine:String,idLocation:number[],toFindValue:string=null,ano:string=null,chartType:string=null,marca:string=null): Observable<MachineModelChartDTO[]>{

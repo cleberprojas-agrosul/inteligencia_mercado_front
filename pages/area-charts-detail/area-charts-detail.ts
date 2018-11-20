@@ -101,7 +101,10 @@ export class AreaChartsDetailPage {
   sumOutrosNumber   = 0;
   totalAreaPP       = 0;
   totalAreaGP       = 0;
+  agrosulAreaPP     = 0;
+  agrosulAreaGP     = 0;
   totalAlgodaoArea  = 0;
+  agrosulAlgodaoArea= 0;
 
   constructor(
      public modalCtrl : ModalController,
@@ -128,10 +131,11 @@ export class AreaChartsDetailPage {
         clientSize:[]=[0],
         areaSize:[]=[0],
 
-        sumClientSoja:[]=[0],
-        sumClientMilho:[]=[0],
-        sumClientAlgodao:[]=[0],
-        sumClientFeijao:[]=[0],
+        sumClientTotalCultiv:[]=[0],
+        sumClientSoja:[]=[],
+        sumClientMilho:[]=[],
+        sumClientAlgodao:[]=[],
+        sumClientFeijao:[]=[],
 
         sum:[]=[0],
         sumNumber:[]=[0],
@@ -162,18 +166,6 @@ export class AreaChartsDetailPage {
         pctCafe:[]=[0],
         pctHorti:[]=[0],
         pctOutros:[]=[0],
-
-        sumPotTratorLocal:[]=[0],
-        sumPotPlantLocal:[]=[0],
-        sumPotColheLocal:[]=[0],
-        sumPotPulvLocal:[]=[0],
-        sumPotCottonLocal:[]=[0],
-
-        sumPotTrator:[]=[0],
-        sumPotPlant:[]=[0],
-        sumPotColhe:[]=[0],
-        sumPotPulv:[]=[0],
-        sumPotCotton:[]=[0],
 
         inTratorLocal:[]=[""],
         inColheLocal:[]=[""],
@@ -220,7 +212,9 @@ export class AreaChartsDetailPage {
     this.addNew();
     this.generateAreaProdInfo("GP");
     this.generateAreaProdInfo("PP");
-    this.generateTableAreaInfo();
+    //this.generateAgrosulAreaProdInfo("GP")
+    //this.generateAgrosulAreaProdInfo("PP")
+    //this.generateTableAreaInfo();
 }
 
 createMultiLevelBarChart(fields){
@@ -647,6 +641,11 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
               this.porteCliente=i[0]._chart.config.data.labels[e._index];
               this.findByValue(this.porteCliente, this.classPorCor);
               this.defineTypeClientTotal(this.porteCliente);
+              //this.generateAreaProdInfo(this.porteCliente);
+              this.generateAgrosulAreaProdInfo(this.porteCliente)
+              this.generateTableAreaInfo();
+              this.generateAgrosulTableAreaInfo();
+              
             }
         },
         animation: {
@@ -720,7 +719,6 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
       this.getRegioes(),
       porteCliente
     ).subscribe(response=>{
-      console.log(response)
        if(porteCliente=="GP"){
           this.totalAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
           this.totalAlgodaoArea = response[0]["totalAlgodao"];
@@ -728,6 +726,20 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
        }else{
           this.totalAreaPP = response[0]["totalHorti"]+response[0]["totalPecuaria"]+response[0]["totalOutros"]+response[0]["totalCafe"];
           this.formGroup.controls.sumPP.setValue(this.formatarNumero(this.totalAreaPP) )
+       }
+    });
+  }
+
+  generateAgrosulAreaProdInfo(porteCliente){
+    this.areaChartService.getTotalAreaCultivGP(
+      [0],
+      porteCliente
+    ).subscribe(response=>{
+       if(porteCliente=="GP"){
+          this.agrosulAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
+          this.agrosulAlgodaoArea = response[0]["totalAlgodao"];
+       }else{
+          this.agrosulAreaPP = response[0]["totalHorti"]+response[0]["totalPecuaria"]+response[0]["totalOutros"]+response[0]["totalCafe"];
        }
     });
   }
@@ -759,7 +771,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
     });
   }
 
-  processMachineLocalData(){
+  private processMachineLocalData(){
     this.mapMachinePotLocal.forEach( (iten,key)=>{
       var avg = (this.totalAreaGP/iten).toFixed(2);
       if(key =="Trator"){
@@ -772,6 +784,50 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
         this.formGroup.controls.inPlantLocal.setValue(avg)
       }else if(key =="Cotton"){
         this.formGroup.controls.inCottonLocal.setValue((this.totalAlgodaoArea/iten).toFixed(2))
+      } 
+    })
+  }
+
+  generateAgrosulTableAreaInfo(){
+    var machines = ['Trator','Colheitadeira','Plantadeira','Pulverizador','Cotton']
+    machines.forEach(typeMachine=>{
+      this.machineBrandService.findMachinesByType(
+        typeMachine.trim(),
+        [0]
+      ).subscribe(response=>{
+        var sPotMachine=0
+        let machineItems : MachineModelChartDTO[] =  response;
+        machineItems.forEach(machine=>{
+          var attribToMesure = +machine.clientName;
+          if(typeMachine.trim() == "Trator"){
+            if(attribToMesure >= 200){
+               sPotMachine += attribToMesure * machine.parqueMaquinas;
+            }
+          }else if(typeMachine.trim() == "Cotton"){
+               sPotMachine  += machine.parqueMaquinas;
+          }else{
+            sPotMachine += attribToMesure * machine.parqueMaquinas;
+          }
+          this.mapMachinePot.set(typeMachine,sPotMachine);
+        })
+        this.processMachineData();
+      });
+    });
+  }
+
+  private processMachineData(){
+    this.mapMachinePot.forEach( (iten,key)=>{
+      var avg = (this.agrosulAreaGP/iten).toFixed(2);
+      if(key =="Trator"){
+        this.formGroup.controls.inTrator.setValue(avg)
+      }else if(key =="Pulverizador"){
+        this.formGroup.controls.inPulv.setValue(avg)
+      }else if(key =="Colheitadeira"){
+        this.formGroup.controls.inColhe.setValue(avg)
+      }else if(key =="Plantadeira"){
+        this.formGroup.controls.inPlant.setValue(avg)
+      }else if(key =="Cotton"){
+        this.formGroup.controls.inCotton.setValue((this.agrosulAlgodaoArea/iten).toFixed(2))
       } 
     })
   }
@@ -1024,44 +1080,58 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
           'onClick': (c,i)=> {
             if(i[0]!=null){
               var e = i[0] ;
+              var porteCliente = e._model.datasetLabel;
               var totalCultivo = i[0]._chart.config.data.datasets[0].data[e._index];
               this.clientName = i[0]._chart.config.data.labels[e._index];
-              this.formGroup.controls.sumClientSoja.setValue(this.formatarNumero(totalCultivo) +'- Ha Cultivados');
+              this.formGroup.controls.sumClientTotalCultiv.setValue(this.formatarNumero(totalCultivo) +'- Ha Cultivados');
               this.formGroup.controls.clientName.setValue(this.clientName);
               this.formGroup.controls.lastbrandName.setValue(clickValue);
               this.formGroup.controls.lastTypeMachine.setValue(this.lastTypeMachine);
-              this.machineBrandService
-              .findMachineByBrandAndOwner(
-                  this.clientName,
-                  "",
-                  "",
+              this.areaChartService
+              .getProprietariosByTamanhoAreaCultura(
                   this.getRegioes()
-                  ).
-                  subscribe(response=>{
-                      var detail="";
-                      var temp:MachineModelChartDTO[]=[];
-                      this.rows = response;
-                      var i=0;
-                      this.rows.forEach(item=>{
-                        detail="";
-                        var tipoEquip = item.tipoEquipamento.trim();
-                          if(tipoEquip == 'Trator')
-                             detail= item.cvTrator+' CV'
-                          else if(tipoEquip == 'Plantadeira')
-                             detail = item.numLinhas+' Linhas'
-                          else if(tipoEquip == 'Colheitadeira')
-                             detail = item.pesColheitadeira+' pés - Tipo '+item.tipoPlataforma
-                          else if(tipoEquip == 'Pulverizador')
-                             detail = item.tamanhoBarra+' Metros'
-                          else if(tipoEquip == 'Cotton')
-                             detail = item.cotton
-                          temp[i]=item;
-                          temp[i].detailTable = detail; 
-                          i++;
-                      })
-                      this.rows=temp;
-                      this.content.scrollToBottom(500);
-                  });
+                  ,porteCliente
+                  ,""
+                  ,""
+                  ,this.clientName)
+                   .subscribe(resp=>{
+                      this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "")
+                      this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "")
+                      this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "")
+                      this.formGroup.controls.sumClientFeijao.setValue(  resp[0]["totalFeijao"]!=null ? "Feijao: " +  resp[0]["totalFeijao"]: "")
+                      console.log(resp)
+                      this.machineBrandService
+                      .findMachineByBrandAndOwner(
+                          this.clientName,
+                          "",
+                          "",
+                          this.getRegioes() )
+                          .subscribe(response=>{
+                              var detail="";
+                              var temp:MachineModelChartDTO[]=[];
+                              this.rows = response;
+                              var i=0;
+                              this.rows.forEach(item=>{
+                                detail="";
+                                var tipoEquip = item.tipoEquipamento.trim();
+                                  if(tipoEquip == 'Trator')
+                                    detail= item.cvTrator+' CV'
+                                  else if(tipoEquip == 'Plantadeira')
+                                    detail = item.numLinhas+' Linhas'
+                                  else if(tipoEquip == 'Colheitadeira')
+                                    detail = item.pesColheitadeira+' pés - Tipo '+item.tipoPlataforma
+                                  else if(tipoEquip == 'Pulverizador')
+                                    detail = item.tamanhoBarra+' Metros'
+                                  else if(tipoEquip == 'Cotton')
+                                    detail = item.cotton
+                                  temp[i]=item;
+                                  temp[i].detailTable = detail; 
+                                  i++;
+                              })
+                              this.rows=temp;
+                              this.content.scrollToBottom(500);
+                          });
+              });
             }
           }, 
           tooltips: {
@@ -1265,7 +1335,8 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
                 this.getRegioes(),
                 this.porteCliente,
                 tamanhoArea,
-                this.classPorCor
+                this.classPorCor,
+                ""
                 ).subscribe(response=>{
                     response.forEach(element => {
                     var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
@@ -1273,7 +1344,7 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
                     data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
                     index++;
                   });
-                  this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+tamanhoArea);
+                  this.createBarChartDetailOwner(label,data,this.porteCliente);
                 })
             }
         },
@@ -1389,14 +1460,14 @@ if(this.pieChartAreaTotal == null){
           var data:number[]=[];
           var index=0;
           if(i[0]!=null){
-            //var tamanhoArea=localStorage.getItem('tamArea');
             var classColor =i[0]._chart.config.data.datasets["0"].backgroundColor[e._index];
             this.classPorCor = this.color.chartColor.get(classColor)
             this.areaChartService.getProprietariosByTamanhoAreaCultura(
               this.getRegioes(),
               this.porteCliente,
               "",
-              this.classPorCor
+              this.classPorCor,
+              ""
               ).subscribe(response=>{
                   response.forEach(element => {
                   var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
@@ -1404,7 +1475,7 @@ if(this.pieChartAreaTotal == null){
                   data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
                   index++;
                 });
-                this.createBarChartDetailOwner(label,data,this.porteCliente+' - '+"");
+                this.createBarChartDetailOwner(label,data,this.porteCliente);
               })
           }
 

@@ -41,8 +41,8 @@ export class AreaChartService{
         return this.http.get<AreaChartDTO[]>(`${this.basePath}/farm/getAreasByFilters?regiaoAgrosul=${agLocationValue}&tamanhoTpCultura=${tamanhoPorCultura}&classPorCor=${classPorCor}`)
     }
 
-    getProprietariosByTamanhoAreaCultura(agLocationValue:number[]=null,tamanhoPorCultura:string=null,tamanhoTpArea:String=null,classPorCor:String=null): Observable<AreaChartDTO[]>{
-        return this.http.get<AreaChartDTO[]>(`${this.basePath}/farm/getProprietariosByTamanhoAreaCultura?regiaoAgrosul=${agLocationValue}&tamanhoTpCultura=${tamanhoPorCultura}&tamanhoTpArea=${tamanhoTpArea}&classPorCor=${classPorCor}`)
+    getProprietariosByTamanhoAreaCultura(agLocationValue:number[]=null,tamanhoPorCultura:string=null,tamanhoTpArea:String=null,classPorCor:String=null,proprietario:String=null): Observable<AreaChartDTO[]>{
+        return this.http.get<AreaChartDTO[]>(`${this.basePath}/farm/getProprietariosByTamanhoAreaCultura?regiaoAgrosul=${agLocationValue}&tamanhoTpCultura=${tamanhoPorCultura}&tamanhoTpArea=${tamanhoTpArea}&classPorCor=${classPorCor}&proprietario=${proprietario}`)
     }
     
     getTotalAreaCultivGP(agLocationValue:number[]=null,tamanhoPorCultura:string=null): Observable<AreaChartDTO[]>{

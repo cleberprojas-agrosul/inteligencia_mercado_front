@@ -235,53 +235,76 @@
             <ion-col col-6 >
              <ion-card>
                 <ion-card-content>
-                 <div class="itemTotalDisplayCard">
-                   <ion-row>
-                     <ion-col>
-                        <ion-label stacked>Trator:</ion-label>
+
+                 <div class="displayTableCard">
+                     <ion-row>
+                      <ion-col>
+                            <ion-input readonly="true" value="Máq. p/ Ha" type="text"></ion-input>
                       </ion-col>
                       <ion-col>
-                         <ion-input readonly="true" formControlName="inTratorLocal" type="text"></ion-input>
+                        <ion-input readonly="true" value="Agrosul" type="text"></ion-input>
+                      </ion-col>
+                      <ion-col>
+                         <ion-input readonly="true"  formControlName="agLocationName"  type="text"></ion-input>
+                      </ion-col>
+                     </ion-row>
+                   <ion-row>
+                     <ion-col>
+                        <ion-label stacked>Trator ( >200 Cv ):</ion-label>
+                      </ion-col>
+                      <ion-col>
+                            <ion-input readonly="true" formControlName="inTrator" type="text"></ion-input>
+                      </ion-col>
+                      <ion-col>
+                            <ion-input readonly="true" formControlName="inTratorLocal" type="text"></ion-input>
                       </ion-col>
                    </ion-row>
-
                    <ion-row>
                         <ion-col>
-                           <ion-label stacked>Colheitadeira:</ion-label>
+                           <ion-label stacked>Colheitadeira ( Pés ):</ion-label>
                          </ion-col>
                          <ion-col>
-                            <ion-input readonly="true" formControlName="inColheLocal" type="text"></ion-input>
+                             <ion-input readonly="true" formControlName="inColhe" type="text"></ion-input>
+                         </ion-col>
+                         <ion-col>
+                                <ion-input readonly="true" formControlName="inColheLocal" type="text"></ion-input>
                          </ion-col>
                     </ion-row>
-
                     <ion-row>
                         <ion-col>
-                            <ion-label stacked>Plantadeira:</ion-label>
+                            <ion-label stacked>Plantadeira  ( Nº Linhas ):</ion-label>
                          </ion-col>
                         <ion-col>
-                            <ion-input readonly="true" formControlName="inPlantLocal" type="text"></ion-input>
+                             <ion-input readonly="true" formControlName="inPlant" type="text"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                                <ion-input readonly="true" formControlName="inPlantLocal" type="text"></ion-input>
                         </ion-col>
                     </ion-row>
-
                     <ion-row>
                         <ion-col>
-                            <ion-label stacked>Pulverizador:</ion-label>
-                            </ion-col>
+                            <ion-label stacked>Pulverizador ( Tam. Barra ):</ion-label>
+                        </ion-col>
                         <ion-col>
-                            <ion-input readonly="true" formControlName="inPulvLocal" type="text"></ion-input>
+                             <ion-input readonly="true" formControlName="inPulv" type="text"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                                <ion-input readonly="true" formControlName="inPulvLocal" type="text"></ion-input>
                         </ion-col>
                     </ion-row>
-                    
                     <ion-row>
                        <ion-col>
-                           <ion-label stacked>Cotton:</ion-label>
+                           <ion-label stacked>Cotton ( Unidade ):</ion-label>
                        </ion-col>
-                       <ion-col>
-                             <ion-input readonly="true" formControlName="inCottonLocal" type="text"></ion-input>
+                        <ion-col>
+                              <ion-input readonly="true" formControlName="inCotton" type="text"></ion-input>
+                        </ion-col>
+                        <ion-col>
+                                <ion-input readonly="true" formControlName="inCottonLocal" type="text"></ion-input>
                         </ion-col>
                     </ion-row>
-
                  </div>
+
                </ion-card-content>
              </ion-card>
             </ion-col >
@@ -305,9 +328,20 @@
             <ion-input readonly="true" formControlName="clientName" type="text"></ion-input>
         </ion-col>
         <ion-col>
-            <ion-input readonly="true" formControlName="sumClientSoja" type="text"></ion-input>
+            <ion-input readonly="true" formControlName="sumClientTotalCultiv" type="text"></ion-input>
         </ion-col>
-        <ion-col col-3></ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientSoja" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientMilho" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientAlgodao" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientFeijao" type="text"></ion-input>
+        </ion-col>
      </ion-row>
      
      <ngx-datatable  class="bootstrap"  

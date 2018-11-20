@@ -15,7 +15,7 @@
                         </ion-select>
                 </ion-item> 
             </ion-col>
-          <!--  <ion-col col-2>
+            <ion-col col-2>
                     <ion-item>
                         <ion-label stacked>Ano Máquina</ion-label>
                         <ion-select multiple="true"  formControlName="anoMaquinaValue"  >
@@ -23,11 +23,9 @@
                                 value="{{ano}}" >{{ano}}
                         </ion-option>
                          </ion-select>
-                       
-                          
                   </ion-item> 
                 </ion-col>
-               <ion-col col-3>
+        <!--       <ion-col col-3>
             <ion-label stacked>Tipo Grafico </ion-label>
             <ion-select multiple="false"  formControlName="chartTypeX"  id="tipoG" >
                 <ion-option  value="marca"  >Marcas</ion-option>
@@ -270,8 +268,7 @@
     </ion-row> 
   
      <ion-row style="background-color:#d2ffd7;font-weight:bold">
-        <ion-col col-3></ion-col>
-
+     
         <ion-col>
             <ion-input readonly="true" formControlName="clientName" type="text"></ion-input>
         </ion-col>
@@ -281,8 +278,21 @@
         <ion-col>
             <ion-input readonly="true" formControlName="clientTotalMaquinas" type="text"></ion-input>
         </ion-col>
-        
-        <ion-col col-3></ion-col>
+        <ion-col>
+            <ion-input readonly="true" formControlName="sumClientTotalCultiv" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientSoja" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientMilho" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientAlgodao" type="text"></ion-input>
+        </ion-col>
+        <ion-col>
+                <ion-input readonly="true" formControlName="sumClientFeijao" type="text"></ion-input>
+        </ion-col>
      </ion-row>
      
    </form>
