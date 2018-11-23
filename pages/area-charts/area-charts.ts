@@ -19,6 +19,7 @@ import { MachineBrandDTO } from '../../models/machineBrandDTO';
 import { MachineModelDTO } from '../../models/machineModelDTO';
 import { MachineModelService } from '../../services/domain/machineModel.service';
 import { map } from 'rxjs/operators';
+import { AreaChartsDetailPage } from '../area-charts-detail/area-charts-detail';
 
 
 
@@ -105,7 +106,7 @@ export class AreaChartsPage {
       this.color = new ColorChartUtils()
       this.formGroup = formBuiler.group({
 				farmAreaType:[] =[],
-        agLocationValue:[]=[0],
+        agLocationValue:[]=[],
         agLocationName:[]=[""],
         clientValue:[]=[],
         clientTotalMaquinas:[]=[0],
@@ -497,12 +498,13 @@ addNew():void{
             data[index]  = element.parqueMaquinas;
             index++;
             soma += element.parqueMaquinas;
+            sPotMachine  += element.parqueMaquinas;
             if( typeMachine.trim() == 'Cotton'){
               totalArea = this.totalAreaAlgodao;
-              sPotMachine  += element.parqueMaquinas;
-            }else{
+            }else if(typeMachine.trim() == 'Plantadeira'){
               sPotMachine += (+element.clientName * element.parqueMaquinas) ;
             }
+            
           }
          });
          var i = 0;
@@ -746,13 +748,22 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                   ,""
                   ,this.clientName)
                    .subscribe(resp=>{
-                    this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "");
-                    this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "");
-                    this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "");
-                    this.formGroup.controls.sumClientFeijao.setValue(  resp[0]["totalFeijao"]!=null ? "Feijao: " +  resp[0]["totalFeijao"]: "");
-                    var soma = resp[0]["totalSoja"]+ resp[0]["totalMilho"]+resp[0]["totalAlgodao"]+resp[0]["totalFeijao"];
-                    this.formGroup.controls.sumClientTotalCultiv.setValue(soma+" - Ha Cultivados");
-                    
+                    if(resp !=null && resp.length>0){
+                      var porteCliente = resp[0]["tamanho_cultura"];
+                      var soma = resp[0]["totalPecuaria"]+ resp[0]["totalCafe"]+resp[0]["totalHorti"]+resp[0]["totalOutros"];
+                      this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalPecuaria"] != null ?  "Pecuária: "+ resp[0]["totalPecuaria"] : "");
+                      this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalCafe"] !=null ? "Café: "+ resp[0]["totalCafe"] : "");
+                      this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalHorti"] !=null ?  "Hortifruti: "+ resp[0]["totalHorti"] : "");
+                      this.formGroup.controls.sumClientFeijao.setValue(  resp[0]["totalOutros"]!=null ? "Outros: " +  resp[0]["totalOutros"]: "");
+                      if(porteCliente == AreaChartsDetailPage.CLASSF_GP){
+                        this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "");
+                        this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "");
+                        this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "");
+                        this.formGroup.controls.sumClientFeijao.setValue(  resp[0]["totalFeijao"]!=null ? "Feijao: " +  resp[0]["totalFeijao"]: "");
+                        soma = resp[0]["totalSoja"]+ resp[0]["totalMilho"]+resp[0]["totalAlgodao"]+resp[0]["totalFeijao"];
+                      }
+                      this.formGroup.controls.sumClientTotalCultiv.setValue(soma+" - Ha Cultivados");
+                    }
                   });
               this.machineBrandService
               .findMachineByBrandAndOwner(
@@ -1543,7 +1554,6 @@ findChildByValue(brandName,typeMachine){
   }
 
   getDetailByMachineType(clickValue){
-    
      if(clickValue.trim() == 'Trator')
       return ' CV '
      else if(clickValue.trim() == 'Plantadeira')
@@ -1557,13 +1567,8 @@ findChildByValue(brandName,typeMachine){
    }
 
   onChange(ev: any) {
-    
     this.formGroup.controls.lower.setValue(ev._valA);
     this.formGroup.controls.upper.setValue(ev._valB);
-  }
-
-  getValueFromLocation(locationName){
-    this.formGroup.controls.agLocationName.setValue(locationName);
   }
 
 }

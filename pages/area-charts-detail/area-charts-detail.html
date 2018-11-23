@@ -5,8 +5,8 @@
            <ion-col  >
                 <ion-item>
                     <ion-label stacked>Região Agrosul</ion-label>
-                        <ion-select multiple="false" formControlName="agLocationValue" >
-                        <ion-option *ngFor="let agLoc of agLocation"  (ionSelect)="getValueFromLocation(agLoc.locationName)"
+                        <ion-select multiple="true" formControlName="agLocationValue" >
+                        <ion-option *ngFor="let agLoc of agLocation" 
                                     value="{{agLoc.id}}" >{{agLoc.locationName}}
                         </ion-option>
                         </ion-select>
@@ -331,16 +331,16 @@
             <ion-input readonly="true" formControlName="sumClientTotalCultiv" type="text"></ion-input>
         </ion-col>
         <ion-col>
-                <ion-input readonly="true" formControlName="sumClientSoja" type="text"></ion-input>
+                <ion-input readonly="true" formControlName="sumClientCultiv1" type="text"></ion-input>
         </ion-col>
         <ion-col>
-                <ion-input readonly="true" formControlName="sumClientMilho" type="text"></ion-input>
+                <ion-input readonly="true" formControlName="sumClientCultiv2" type="text"></ion-input>
         </ion-col>
         <ion-col>
-                <ion-input readonly="true" formControlName="sumClientAlgodao" type="text"></ion-input>
+                <ion-input readonly="true" formControlName="sumClientCultiv3" type="text"></ion-input>
         </ion-col>
         <ion-col>
-                <ion-input readonly="true" formControlName="sumClientFeijao" type="text"></ion-input>
+                <ion-input readonly="true" formControlName="sumClientCultiv4" type="text"></ion-input>
         </ion-col>
      </ion-row>
      

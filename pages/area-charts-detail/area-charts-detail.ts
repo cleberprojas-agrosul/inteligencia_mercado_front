@@ -53,21 +53,25 @@ export class AreaChartsDetailPage {
   
   formGroup: FormGroup;
 
-  formGroup2: FormGroup;
-
   pieChart: Chart;
 	barChart: Chart;
-	
   pieChartCompared: Chart;
   pieChartArea: Chart;
   pieChartAreaTotal:Chart;
   pieChartLocation: Chart;
-  
   barChartCompared: Chart;
   barChartDetail: Chart;
   barChartDetailOwner: Chart;
-
   pieChartClientTamArea: Chart;
+
+
+  static readonly CLASSF_GP = "GP";
+  static readonly CLASSF_PP = "GP";
+
+  static readonly CLASSF_GP_PEQUENO = "Pequeno";
+  static readonly CLASSF_GP_MEDIO = "Medio";
+  static readonly CLASSF_GP_GRANDE = "Grande";
+  static readonly CLASSF_GP_MEGA = "Mega";
   
   public columns : any;
 
@@ -132,10 +136,11 @@ export class AreaChartsDetailPage {
         areaSize:[]=[0],
 
         sumClientTotalCultiv:[]=[0],
-        sumClientSoja:[]=[],
-        sumClientMilho:[]=[],
-        sumClientAlgodao:[]=[],
-        sumClientFeijao:[]=[],
+        sumClientCultiv1:[]=[],
+        sumClientCultiv2:[]=[],
+        sumClientCultiv3:[]=[],
+        sumClientCultiv4:[]=[],
+       
 
         sum:[]=[0],
         sumNumber:[]=[0],
@@ -210,11 +215,8 @@ export class AreaChartsDetailPage {
       this.setDataPieChartAreaTotal(fields)
     }
     this.addNew();
-    this.generateAreaProdInfo("GP");
-    this.generateAreaProdInfo("PP");
-    //this.generateAgrosulAreaProdInfo("GP")
-    //this.generateAgrosulAreaProdInfo("PP")
-    //this.generateTableAreaInfo();
+    this.generateAreaProdInfo(AreaChartsDetailPage.CLASSF_GP);
+    this.generateAreaProdInfo(AreaChartsDetailPage.CLASSF_PP);
 }
 
 createMultiLevelBarChart(fields){
@@ -719,7 +721,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
       this.getRegioes(),
       porteCliente
     ).subscribe(response=>{
-       if(porteCliente=="GP"){
+       if(porteCliente == AreaChartsDetailPage.CLASSF_GP){
           this.totalAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
           this.totalAlgodaoArea = response[0]["totalAlgodao"];
           this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP) )
@@ -735,7 +737,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
       [0],
       porteCliente
     ).subscribe(response=>{
-       if(porteCliente=="GP"){
+       if(porteCliente== AreaChartsDetailPage.CLASSF_GP ){
           this.agrosulAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
           this.agrosulAlgodaoArea = response[0]["totalAlgodao"];
        }else{
@@ -749,20 +751,17 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
     machines.forEach(typeMachine=>{
       this.machineBrandService.findMachinesByType(
         typeMachine.trim(),
-        this.getRegioes()
+        this.getRegioes(),
+        [""]
       ).subscribe(response=>{
         var sPotMachine=0
         let machineItems : MachineModelChartDTO[] =  response;
         machineItems.forEach(machine=>{
           var attribToMesure = +machine.clientName;
-          if(typeMachine.trim() == "Trator"){
-            if(attribToMesure >= 200){
+          sPotMachine  += machine.parqueMaquinas;
+          if( (typeMachine.trim() == "Trator" && attribToMesure >= 200 ) 
+            || (typeMachine.trim() == "Plantadeira") ){
                sPotMachine += attribToMesure * machine.parqueMaquinas;
-            }
-          }else if(typeMachine.trim() == "Cotton"){
-               sPotMachine  += machine.parqueMaquinas;
-          }else{
-            sPotMachine += attribToMesure * machine.parqueMaquinas;
           }
           this.mapMachinePotLocal.set(typeMachine,sPotMachine);
         })
@@ -793,20 +792,17 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
     machines.forEach(typeMachine=>{
       this.machineBrandService.findMachinesByType(
         typeMachine.trim(),
-        [0]
+        [0],
+        [""]
       ).subscribe(response=>{
         var sPotMachine=0
         let machineItems : MachineModelChartDTO[] =  response;
         machineItems.forEach(machine=>{
+          sPotMachine  += machine.parqueMaquinas;
           var attribToMesure = +machine.clientName;
-          if(typeMachine.trim() == "Trator"){
-            if(attribToMesure >= 200){
+          if( (typeMachine.trim() == "Trator" && attribToMesure >= 200) 
+                || (typeMachine.trim() == "Plantadeira") ){
                sPotMachine += attribToMesure * machine.parqueMaquinas;
-            }
-          }else if(typeMachine.trim() == "Cotton"){
-               sPotMachine  += machine.parqueMaquinas;
-          }else{
-            sPotMachine += attribToMesure * machine.parqueMaquinas;
           }
           this.mapMachinePot.set(typeMachine,sPotMachine);
         })
@@ -832,10 +828,6 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
     })
   }
 
- /************* 
- TODO Criar processo cenario com todas as regioes
- *************/
-  
   createPieChartTamanhoArea(labels:String[], data:number[]){
     var sumTotal=0
     data.forEach(iten => {
@@ -862,12 +854,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
               position:'right'
             },
             'onClick': (c,i)=> {
-
-            
               var e = i[0] ;
-              var label:string[]=[];
-              var data:number[]=[];
-              var index=0;
               if(i[0]!=null){
                 var tamanhoArea=i[0]._chart.config.data.labels[e._index];
                 this.defineTypeClient(this.porteCliente,tamanhoArea);
@@ -889,7 +876,6 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
                 for (var i = 0; i < dataset.data.length; i++) {
                   var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
                       total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                      //mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
                       mid_radius = model.outerRadius-20,
                       start_angle = model.startAngle,
                       end_angle = model.endAngle,
@@ -901,9 +887,6 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
                   var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
                   if(!isHidden && percent!='0%')
                     ctx.fillText(percent, model.x + x, model.y + y + 15);
-                  // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
-                  // Display percent in another line, line break doesn't work for fillText
-                 
                 }
               });               
             }
@@ -987,7 +970,6 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
               var machineType = i[0]._chart.config.data.labels[e._index];
               var brandName = i[0]._model.datasetLabel;
               this.findMachinesByBrand(machineType)
-             // this.findChildByValue(brandName,machineType);
             }
         },
         "animation": {
@@ -1095,13 +1077,18 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                   ,""
                   ,this.clientName)
                    .subscribe(resp=>{
-                      this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "")
-                      this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "")
-                      this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "")
-                      this.formGroup.controls.sumClientFeijao.setValue(  resp[0]["totalFeijao"]!=null ? "Feijao: " +  resp[0]["totalFeijao"]: "")
-                      console.log(resp)
-                      this.machineBrandService
-                      .findMachineByBrandAndOwner(
+                    this.formGroup.controls.sumClientCultiv1.setValue( resp[0]["totalPecuaria"] != null ?  "Pecuária: "+ resp[0]["totalPecuaria"] : "")
+                    this.formGroup.controls.sumClientCultiv2.setValue( resp[0]["totalHorti"] !=null ? "Hortifruti: "+ resp[0]["totalHorti"] : "")
+                    this.formGroup.controls.sumClientCultiv3.setValue(resp[0]["totalCafe"] !=null ?  "Café: "+ resp[0]["totalCafe"] : "")
+                    this.formGroup.controls.sumClientCultiv4.setValue(  resp[0]["totalOutros"]!=null ? "Outros: " +  resp[0]["totalOutros"]: "")
+                    if(porteCliente == AreaChartsDetailPage.CLASSF_GP ){
+                      this.formGroup.controls.sumClientCultiv1.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "")
+                      this.formGroup.controls.sumClientCultiv2.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "")
+                      this.formGroup.controls.sumClientCultiv3.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "")
+                      this.formGroup.controls.sumClientCultiv4.setValue(  resp[0]["totalFeijao"]!=null ? "Feijao: " +  resp[0]["totalFeijao"]: "")
+                     }                      
+                     this.machineBrandService
+                         .findMachineByBrandAndOwner(
                           this.clientName,
                           "",
                           "",
@@ -1339,10 +1326,12 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
                 ""
                 ).subscribe(response=>{
                     response.forEach(element => {
-                    var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
-                    label[index] = element['proprietario'];
-                    data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
-                    index++;
+                      var somaAreaCultivada  = element['totalPecuaria']+element['totalCafe']+element['totalHorti']+element['totalOutros'];
+                      if(this.porteCliente == AreaChartsDetailPage.CLASSF_GP)
+                          somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
+                      label[index] = element['proprietario'];
+                      data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
+                      index++;
                   });
                   this.createBarChartDetailOwner(label,data,this.porteCliente);
                 })
@@ -1364,7 +1353,6 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
               for (var i = 0; i < dataset.data.length; i++) {
                 var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
                     total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                    //mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
                     mid_radius = model.outerRadius-20,
                     start_angle = model.startAngle,
                     end_angle = model.endAngle,
@@ -1376,9 +1364,6 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
                 var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
                 if(!isHidden && percent!='0%')
                   ctx.fillText(percent, model.x + x, model.y + y + 15);
-                // ctx.fillText(dataset.data[i], model.x + x, model.y + y);
-                // Display percent in another line, line break doesn't work for fillText
-               
               }
             });               
           }
@@ -1469,8 +1454,11 @@ if(this.pieChartAreaTotal == null){
               this.classPorCor,
               ""
               ).subscribe(response=>{
+                 console.log(this.porteCliente)
                   response.forEach(element => {
-                  var somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
+                  var somaAreaCultivada  = element['totalPecuaria']+element['totalCafe']+element['totalHorti']+element['totalOutros'];
+                  if(this.porteCliente == AreaChartsDetailPage.CLASSF_GP)
+                      somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
                   label[index] = element['proprietario'];
                   data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
                   index++;
@@ -1603,7 +1591,6 @@ findChildByValue(brandName,typeMachine){
     }
 		this.agrosulLocationService.findAllByUserId(userID)
 		  	.subscribe(response=>{
-           // this.agLocation = response
             response.forEach(iten=>{ 
               todos = new AgrosulLocationDTO();
               todos.id=iten.id;
@@ -1642,32 +1629,6 @@ findChildByValue(brandName,typeMachine){
     modalPage.present();
   }
   
-  loadDetail(){
-     this.clientService.findAllFarmsByAgLocation(this.formGroup.value.agLocationValue,
-            0)
-			.subscribe(response=>{
-        this.formGroup2.controls.clientsValue.setValue(response);
-        this.clientList = response;
-        this.formGroup2.controls.typeClientValue.setValue(response[0].typeClient.typeName);
-        this.formGroup2.controls.clientPhoneNumber.setValue(response[0].farms[0].phoneNumber);
-        this.formGroup2.controls.farmsDetailName.setValue(response[0].farms[0].farmName);
-        this.formGroup2.controls.agAgrosulLocation.setValue(response[0].farms[0].agrosulLocation.locationName);
-        this.formGroup2.controls.farmAreaType.setValue(response[0].farms[0].farmFields[0].farmFielType.typeName);
-        this.formGroup2.controls.farmAreaType.setValue(response[0].farms[0].farmFields[0].farmFielType.typeName);
-   	},
-		error=>{
-				console.log(error);
-		});	
-  }
-
-  updateFilter(event) {
-    const val = event.target.value.toLowerCase();
-    const temp = this.clientList.filter(function(d) {
-      return d.name.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    this.formGroup2.controls.clientsValue.setValue(temp);
-  }
-
   formatarNumero(n) {
     var n = n.toString();
     var r = '';
@@ -1691,5 +1652,4 @@ findChildByValue(brandName,typeMachine){
 		});
 	 return backgroudColors;
 	}
-
 }
