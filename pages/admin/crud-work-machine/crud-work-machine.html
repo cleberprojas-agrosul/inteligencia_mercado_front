@@ -16,8 +16,35 @@
         <ion-row>
           <ion-col>
             <ion-item>
-                <ion-label>Fazenda</ion-label>
-                <ion-input type="text"  name="title"></ion-input>
+                <ion-label>Marca</ion-label>
+                <ion-select class="edit-select" multiple="false" formControlName="wmMachineBrandId"  >
+                    <ion-option *ngFor="let brand of this.listAllBrands" (ionSelect)="refreshMachineModels(brand)"
+                                [selected]="brand.id == wmMachineBrandId"    
+                                value="{{brand.id}}" >{{brand.name}}
+                    </ion-option>
+                 </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+                <ion-label>Modelo</ion-label>
+                <ion-select class="edit-select" multiple="false" formControlName="wmMachineModelId">
+                    <ion-option *ngFor="let model of this.listAllModels" 
+                                [selected]="model.id == wmMachineModelId"    
+                                value="{{model.id}}" >{{model.name}}
+                    </ion-option>
+                 </ion-select>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+                <ion-label>Tipo Equipamento</ion-label>
+                <ion-select class="edit-select" multiple="false" formControlName="wmTypeMachineId">
+                    <ion-option *ngFor="let type of this.listAllMachineTypes" 
+                                [selected]="type.id == wmTypeMachineId"    
+                                value="{{type.id}}" >{{type.typeName}}
+                    </ion-option>
+                 </ion-select>
               </ion-item>
           </ion-col>
         </ion-row>

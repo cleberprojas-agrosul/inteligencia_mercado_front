@@ -28,4 +28,10 @@ export class MachineModelService{
     findAllAnoModelo(): Observable<String[]>{
         return this.http.get<String[]>(`${this.basePath}/model/listAllAnoModelo`)
     }
+
+    findAllModelsByBrand(brandName:String=null): Observable<MachineModelDTO[]>{
+        return this.http.get<MachineModelDTO[]>(`${this.basePath}/model/listModelsByBrand?brandName=${brandName}`)
+    }
+
+    
 }
