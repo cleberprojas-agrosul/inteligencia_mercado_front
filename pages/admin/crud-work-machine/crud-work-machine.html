@@ -1,18 +1,26 @@
-<!--
-  Generated template for the CrudWorkMachinePage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
-  <ion-navbar>
-    <ion-title>crudWorkMachine</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
+    <ion-navbar color="secondary">
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+      <ion-title style="color:gold" >Editar Fazenda </ion-title>
+      <ion-buttons end>
+          <button ion-button > VOLTAR</button>
+      </ion-buttons>
+    </ion-navbar>
+  </ion-header>
 
 <ion-content padding>
-
+  <form  [formGroup]="formGroup">
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+                <ion-label>Fazenda</ion-label>
+                <ion-input type="text"  name="title"></ion-input>
+              </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+  </form>
 </ion-content>

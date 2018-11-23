@@ -155,7 +155,6 @@ export class CrudFarmPage {
    // Work Machines - Parque de maquinas
    this.formGroup.controls.workMachines.setValue(this.agFarms[0].workMachines)
    this.listWorkMachines = this.agFarms[0].workMachines;
-   console.log( this.listWorkMachines)
    this.listWorkMachines.forEach(wm=>{
    });
   }
