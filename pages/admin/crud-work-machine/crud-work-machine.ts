@@ -10,13 +10,6 @@ import { MachineModelDTO } from '../../../models/machineModelDTO';
 import { MachineTypeService } from '../../../services/domain/machineType.service';
 import { MachineTypeDTO } from '../../../models/machineTypeDTO';
 
-/**
- * Generated class for the CrudWorkMachinePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-crud-work-machine',

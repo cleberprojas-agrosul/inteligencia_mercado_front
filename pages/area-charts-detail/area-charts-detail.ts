@@ -17,6 +17,7 @@ import { MachineModelChartDTO } from '../../models/charts/machineModelChartDTO';
 import { MachineBrandService } from '../../services/domain/machineBrand.service';
 import { MachineBrandDTO } from '../../models/machineBrandDTO';
 import { AgrosulClassificationDTO } from '../../models/agrosulClassificationDTO';
+import { ChartUtils } from '../../Utils/charts-utils';
 
 
 
@@ -64,15 +65,6 @@ export class AreaChartsDetailPage {
   barChartDetailOwner: Chart;
   pieChartClientTamArea: Chart;
 
-
-  static readonly CLASSF_GP = "GP";
-  static readonly CLASSF_PP = "GP";
-
-  static readonly CLASSF_GP_PEQUENO = "Pequeno";
-  static readonly CLASSF_GP_MEDIO = "Medio";
-  static readonly CLASSF_GP_GRANDE = "Grande";
-  static readonly CLASSF_GP_MEGA = "Mega";
-  
   public columns : any;
 
   agLocation: AgrosulLocationDTO[] = [];
@@ -95,6 +87,7 @@ export class AreaChartsDetailPage {
   clientName:string=""
   porteCliente:string="";
   classPorCor: String="";
+  arrayLocationName:String[]=[];
   sumSojaNumber     = 0;
   sumMilhoNumber    = 0;
   sumAlgodaoNumber  = 0;
@@ -211,12 +204,12 @@ export class AreaChartsDetailPage {
       fields = ['areaPropria','areaArrendada']
       this.createMultiLevelBarChart(fields)
     }else {
-      fields = ['Soja','Milho','Algodao','Pecuaria','Feijao','Outros','Cafe','Horti'];
+      fields = ChartUtils.CULTIV_TYPES;
       this.setDataPieChartAreaTotal(fields)
     }
     this.addNew();
-    this.generateAreaProdInfo(AreaChartsDetailPage.CLASSF_GP);
-    this.generateAreaProdInfo(AreaChartsDetailPage.CLASSF_PP);
+    this.generateAreaProdInfo(ChartUtils.CLASSF_GP);
+    this.generateAreaProdInfo(ChartUtils.CLASSF_PP);
 }
 
 createMultiLevelBarChart(fields){
@@ -330,25 +323,25 @@ setDataPieChartAreaTotal(fields){
 }
 
 setCultivTotalByLocation(total:number,key:String){
-  if(key=='Soja'){
+  if(key == ChartUtils.CULTIV_TYPE_SOJA){
      this.sumSojaNumber = total;
      this.formGroup.controls.sumSojaLocal.setValue(this.formatarNumero(total));
-  }else   if(key=='Milho'){
+  }else   if(key == ChartUtils.CULTIV_TYPE_MILHO){
      this.sumMilhoNumber = total;
      this.formGroup.controls.sumMilhoLocal.setValue(this.formatarNumero(total));
-  }else   if(key=='Algodao'){
+  }else   if(key == ChartUtils.CULTIV_TYPE_ALGODAO){
      this.sumAlgodaoNumber = total;
      this.formGroup.controls.sumAlgodaoLocal.setValue(this.formatarNumero(total));
-  }else   if(key=='Feijao'){
+  }else   if(key == ChartUtils.CULTIV_TYPE_FEIJAO){
      this.sumFeijaoNumber = total;
      this.formGroup.controls.sumFeijaoLocal.setValue(this.formatarNumero(total));
-  }else   if(key=='Pecuaria'){
+  }else   if(key == ChartUtils.CULTIV_TYPE_PECUARIA){
      this.sumPecuariaNumber = total;
      this.formGroup.controls.sumPecuariaLocal.setValue(this.formatarNumero(total));
-  }else   if(key=='Outros'){
+  }else   if(key == ChartUtils.CULTIV_TYPE_OUTROS){
      this.sumOutrosNumber = total;
      this.formGroup.controls.sumOutrosLocal.setValue(this.formatarNumero(total));
-}else   if(key=='Cafe'){
+ }else   if(key == ChartUtils.CULTIV_TYPE_CAFE){
      this.sumCafeNumber = total;
      this.formGroup.controls.sumCafeLocal.setValue(this.formatarNumero(total));
  }else{
@@ -497,7 +490,7 @@ createPieChart(labels,data1){
         },
         title: {
           display: true,
-          text: 'Tipo de Cultura da Região - '+this.formGroup.value.agLocationName
+          text: 'Tipo de Cultura da Região - '+ this.getLocationName()
         },
         animation: {
           duration: 500,
@@ -721,7 +714,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
       this.getRegioes(),
       porteCliente
     ).subscribe(response=>{
-       if(porteCliente == AreaChartsDetailPage.CLASSF_GP){
+       if(porteCliente == ChartUtils.CLASSF_GP){
           this.totalAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
           this.totalAlgodaoArea = response[0]["totalAlgodao"];
           this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP) )
@@ -737,7 +730,7 @@ createPieChartCompared(labels:String[], data:number[],locationName:String){
       [0],
       porteCliente
     ).subscribe(response=>{
-       if(porteCliente== AreaChartsDetailPage.CLASSF_GP ){
+       if(porteCliente== ChartUtils.CLASSF_GP ){
           this.agrosulAreaGP = response[0]["totalMilho"]+response[0]["totalSoja"]+response[0]["totalAlgodao"]+response[0]["totalFeijao"];
           this.agrosulAlgodaoArea = response[0]["totalAlgodao"];
        }else{
@@ -1081,7 +1074,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                     this.formGroup.controls.sumClientCultiv2.setValue( resp[0]["totalHorti"] !=null ? "Hortifruti: "+ resp[0]["totalHorti"] : "")
                     this.formGroup.controls.sumClientCultiv3.setValue(resp[0]["totalCafe"] !=null ?  "Café: "+ resp[0]["totalCafe"] : "")
                     this.formGroup.controls.sumClientCultiv4.setValue(  resp[0]["totalOutros"]!=null ? "Outros: " +  resp[0]["totalOutros"]: "")
-                    if(porteCliente == AreaChartsDetailPage.CLASSF_GP ){
+                    if(porteCliente == ChartUtils.CLASSF_GP ){
                       this.formGroup.controls.sumClientCultiv1.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "")
                       this.formGroup.controls.sumClientCultiv2.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "")
                       this.formGroup.controls.sumClientCultiv3.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "")
@@ -1327,7 +1320,7 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
                 ).subscribe(response=>{
                     response.forEach(element => {
                       var somaAreaCultivada  = element['totalPecuaria']+element['totalCafe']+element['totalHorti']+element['totalOutros'];
-                      if(this.porteCliente == AreaChartsDetailPage.CLASSF_GP)
+                      if(this.porteCliente == ChartUtils.CLASSF_GP)
                           somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
                       label[index] = element['proprietario'];
                       data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
@@ -1457,7 +1450,7 @@ if(this.pieChartAreaTotal == null){
                  console.log(this.porteCliente)
                   response.forEach(element => {
                   var somaAreaCultivada  = element['totalPecuaria']+element['totalCafe']+element['totalHorti']+element['totalOutros'];
-                  if(this.porteCliente == AreaChartsDetailPage.CLASSF_GP)
+                  if(this.porteCliente == ChartUtils.CLASSF_GP)
                       somaAreaCultivada = element['totalSoja']+element['totalMilho']+element['totalAlgodao']+element['totalFeijao'];
                   label[index] = element['proprietario'];
                   data[index]  = somaAreaCultivada ==0?1:somaAreaCultivada;
@@ -1618,8 +1611,12 @@ findChildByValue(brandName,typeMachine){
 		});	
   }
 
-  getValueFromLocation(locationName){
+  setLocationName(locationName){
     this.formGroup.controls.agLocationName.setValue(locationName);
+  }
+
+  getLocationName(){
+      return this.formGroup.value.agLocationName;
   }
   
   detailClient(client:ClientDTO){

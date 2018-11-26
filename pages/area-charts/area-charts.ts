@@ -9,19 +9,15 @@ import { Chart } from 'chart.js';
 import { AreaChartService } from '../../services/domain/area-chart.service';
 import { SeedTypeDTO } from '../../models/seedTypeDTO';
 import { AreaChartDTO } from '../../models/charts/areaChartDTO';
-import { AreaFilterDTO } from '../../models/areaFilterDTO';
 import { ColorChartUtils } from '../../Utils/color-charts-utils';
 import { ModalController } from 'ionic-angular';
 import { MachineChartService } from '../../services/domain/machine-chart.service';
 import { MachineModelChartDTO } from '../../models/charts/machineModelChartDTO';
 import { MachineBrandService } from '../../services/domain/machineBrand.service';
 import { MachineBrandDTO } from '../../models/machineBrandDTO';
-import { MachineModelDTO } from '../../models/machineModelDTO';
 import { MachineModelService } from '../../services/domain/machineModel.service';
-import { map } from 'rxjs/operators';
 import { AreaChartsDetailPage } from '../area-charts-detail/area-charts-detail';
-
-
+import { ChartUtils } from '../../Utils/charts-utils';
 
 @IonicPage()
 @Component({
@@ -42,10 +38,9 @@ export class AreaChartsPage {
 
   @ViewChild('barCanvasMachinesByBrand') barCanvasMachinesByBrand;
   @ViewChild('barCanvasMachinesByYear') barCanvasMachinesByYear;
+  @ViewChild('barCanvasMachinesByYearNoDetail') barCanvasMachinesByYearNoDetail;
 
   @ViewChild('barCanvasBrandsByYear') barCanvasBrandsByYear;
-
-  
   
   @ViewChild('filtersSel') filtersSel;
 
@@ -62,6 +57,7 @@ export class AreaChartsPage {
 
   barChartMachineByBrand: Chart;
   barChartMachineByYear: Chart;
+  barChartMachineByYearNoDetail: Chart;
 
   barChartBrandsByYear: Chart;
 
@@ -90,7 +86,6 @@ export class AreaChartsPage {
   totalAreaGP:number = 0;
   totalAreaAlgodao:number = 0;
   somaCvGp:number =0;
-
 
   constructor(
      public modalCtrl : ModalController,
@@ -213,19 +208,19 @@ createMultiLevelBartChart(){
 }
 
 setCultivTotal(total:number,key:String){
-  if(key=='Soja')
+  if(key==ChartUtils.CULTIV_TYPE_SOJA)
      this.formGroup.controls.sumSoja.setValue(this.formatarNumero(total));
-  else   if(key=='Milho')
+  else   if(key==ChartUtils.CULTIV_TYPE_MILHO)
      this.formGroup.controls.sumMilho.setValue(this.formatarNumero(total));
-  else   if(key=='Algodao')
+  else   if(key==ChartUtils.CULTIV_TYPE_ALGODAO)
      this.formGroup.controls.sumAlgodao.setValue(this.formatarNumero(total));
-  else   if(key=='Feijao')
+  else   if(key==ChartUtils.CULTIV_TYPE_FEIJAO)
      this.formGroup.controls.sumFeijao.setValue(this.formatarNumero(total));
-  else   if(key=='Pecuaria')
+  else   if(key==ChartUtils.CULTIV_TYPE_PECUARIA)
      this.formGroup.controls.sumPecuaria.setValue(this.formatarNumero(total));
-  else   if(key=='Outros')
+  else   if(key==ChartUtils.CULTIV_TYPE_OUTROS)
      this.formGroup.controls.sumOutros.setValue(this.formatarNumero(total));
-  else   if(key=='Cafe')
+  else   if(key==ChartUtils.CULTIV_TYPE_CAFE)
      this.formGroup.controls.sumCafe.setValue(this.formatarNumero(total));
   else   
      this.formGroup.controls.sumHorti.setValue(this.formatarNumero(total));
@@ -381,10 +376,6 @@ addNew():void{
               var brandName=i[0]._chart.config.data.labels[e._index];
               this.findByValue(brandName.slice(0,brandName.indexOf(":")));
               this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP));
-             /* var top = this.pieCanvasCompared.nativeElement.getBoundingClientRect().top
-              var posX = top - ( (top/100)*80 )
-              var posY = this.pieCanvasCompared.nativeElement.getBoundingClientRect().bottom
-              this.content.scrollTo(500,posX+posY,800);*/
             }
         },
         animation: {
@@ -504,7 +495,6 @@ addNew():void{
             }else if(typeMachine.trim() == 'Plantadeira'){
               sPotMachine += (+element.clientName * element.parqueMaquinas) ;
             }
-            
           }
          });
          var i = 0;
@@ -557,6 +547,7 @@ addNew():void{
   }
 
  findMachinesByYear(toFindValue,typeMachine){
+   console.log(toFindValue,typeMachine)
   if(typeMachine.trim()=='Trator'){
     this.machineBrandService.findMachinesByYearCvRange(
           typeMachine.trim(),
@@ -604,7 +595,7 @@ addNew():void{
       error =>{console.log(error)}
       );
     }   
-  }
+}
   
 createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:string){
    var labelColors:String[] =[];
@@ -641,7 +632,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
               var brandName = i[0]._model.datasetLabel;
               this.findMachinesByBrand(machineType);
               this.findMachinesByType(machineType);
-
+              this.findMachinesByYearNoDetail(machineType);
             }
         },
         "animation": {
@@ -755,7 +746,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                       this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalCafe"] !=null ? "Café: "+ resp[0]["totalCafe"] : "");
                       this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalHorti"] !=null ?  "Hortifruti: "+ resp[0]["totalHorti"] : "");
                       this.formGroup.controls.sumClientFeijao.setValue(  resp[0]["totalOutros"]!=null ? "Outros: " +  resp[0]["totalOutros"]: "");
-                      if(porteCliente == AreaChartsDetailPage.CLASSF_GP){
+                      if(porteCliente == ChartUtils.CLASSF_GP){
                         this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalSoja"] != null ?  "Soja: "+ resp[0]["totalSoja"] : "");
                         this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalMilho"] !=null ? "Milho: "+ resp[0]["totalMilho"] : "");
                         this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalAlgodao"] !=null ?  "Algodao: "+ resp[0]["totalAlgodao"] : "");
@@ -798,7 +789,6 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                       this.rows=temp;
                       this.formGroup.controls.clientTotalMaquinas.setValue(somaParque+ " Máquinas   ");
                       this.content.scrollToBottom(500);
-                     
                   });
             }
           }, 
@@ -937,11 +927,12 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
      }	
   }
 
-  createBarChartBrandsByYear(labels:String[], data:number[],clickValue,typeMachine,soma:number){
+  createBarChartBrandsByYear(labels:String[], data:number[],clickValue,typeMachine,flHasDetail:Boolean){
     var labelColors:String[] =[];
     var i=0;
     labelColors = this.getBackgroundColors(labels);
-    var anoModelo = localStorage.getItem('anoModelo')
+    var anoModelo = localStorage.getItem('anoModelo');
+    var titleText = flHasDetail?clickValue+ ' '+this.getDetailByMachineType(typeMachine)+ ' - '+anoModelo : anoModelo;
     if(this.barChartBrandsByYear == null){
         this.barChartBrandsByYear = new Chart(this.barCanvasBrandsByYear.nativeElement, {
           type: 'bar',
@@ -953,9 +944,9 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
               backgroundColor:labelColors
             }]
           },options:{
-            title: {
+            title:{
               display: true, 
-              text:  typeMachine+' ' +clickValue+ ' '+this.getDetailByMachineType(typeMachine)+ ' - '+anoModelo
+              text:  titleText
             },
             'onClick': (c,i)=> {
               if(i[0]!=null){
@@ -1011,7 +1002,7 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
       this.barChartBrandsByYear.data.labels=labels;
       this.barChartBrandsByYear.data.backgroundColor=labelColors;
       this.barChartBrandsByYear.options.scales.xAxes[0].scaleLabel.labelString = this.getDetailByMachineType(clickValue);
-      this.barChartBrandsByYear.options.title.text=  clickValue+ ' '+this.getDetailByMachineType(typeMachine)+ ' - '+anoModelo
+      this.barChartBrandsByYear.options.title.text=  titleText;
       var i = this.barChartBrandsByYear.data.datasets.length;
       var dt = {
                   label: 'Clientes',
@@ -1032,6 +1023,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
     var labelColors:String[] =[];
     var i=0;
     labelColors = this.getBackgroundColors(labels);
+    console.log(data)
     if(this.barChartMachineByBrand == null){
         this.barChartMachineByBrand = new Chart(this.barCanvasMachinesByBrand.nativeElement, {
           type: 'bar',
@@ -1092,6 +1084,11 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
                       padding: 0,
                       min:1
                     }
+                  }],
+                  yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
                   }]
             },
       }
@@ -1141,12 +1138,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
                 var e = i[0] ;
                 var anoModelo = i[0]._chart.config.data.labels[e._index];
                 var machineType = i[0]._model.datasetLabel;
-                this.findBrandsbyYearMachine(anoModelo,machineType);
-                /*var top = this.barCanvasMachinesByBrand.nativeElement.getBoundingClientRect().top
-                var posX = top - ( (top/100)*20 )
-                var posY = this.barCanvasMachinesByBrand.nativeElement.getBoundingClientRect().bottom
-                this.content.scrollTo(500,posX+posY,800);
-               */
+                this.findBrandsbyYearMachine(anoModelo,machineType,true);
               }
             },
             "animation": {
@@ -1212,6 +1204,152 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
     }	
   }
 
+  processTractorNoDetail(){
+    this.machineBrandService.findMachinesByYearCvRange(
+      ChartUtils.MACHINE_TYPE_TRACTOR,
+      this.getRegioes(),
+      "",
+      this.getAnoMaquinaSelected()
+      ).subscribe(response=>{
+        this.machineItems = response;
+        var label: String[] = [];
+        var data: number[] = [];
+        var index = 0;
+        var soma=0;
+        this.machineItems.forEach(element => {
+          label[index] = element.clientName;  
+          data[index]  = element.parqueMaquinas;
+          index++;
+          soma += element.parqueMaquinas;
+        });
+      this.createBarChartMachineByYearNoDetail(label,data,ChartUtils.MACHINE_TYPE_TRACTOR,soma)
+      },
+    error =>{console.log(error)}
+    );
+  }
+
+  processMachineNoDetail(typeMachine){
+    this.machineBrandService.findMachinesByYear(
+      typeMachine.trim(),
+      this.getRegioes(),
+      "",
+      this.getAnoMaquinaSelected()
+      ).subscribe(response=>{
+        this.machineItems = response;
+        var label: String[] = [];
+        var data: number[] = [];
+        var index = 0;
+        var soma=0;
+        this.machineItems.forEach(element => {
+          label[index] = element.clientName;
+          data[index]  = element.parqueMaquinas;
+          index++;
+          soma += element.parqueMaquinas;
+        });
+      this.createBarChartMachineByYearNoDetail(label,data,typeMachine,soma)
+      },
+    error =>{console.log(error)}
+    );
+  }
+
+  findMachinesByYearNoDetail(typeMachine){
+    if(typeMachine!= undefined && typeMachine.trim()==ChartUtils.MACHINE_TYPE_TRACTOR){
+      this.processTractorNoDetail();
+    }else{
+      this.processMachineNoDetail(typeMachine);
+    }   
+  }
+
+  createBarChartMachineByYearNoDetail(labels:String[], data:number[],clickValue:string,soma:number){
+    var labelColors:String[] =[];
+    var i=0;
+    labelColors = this.getBackgroundColors(labels);
+    if(this.barChartMachineByYearNoDetail == null){
+        this.barChartMachineByYearNoDetail = new Chart(this.barCanvasMachinesByYearNoDetail.nativeElement, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: clickValue,
+              data: data,
+              backgroundColor:labelColors
+            }]
+          },options:{
+            title: {
+              display: true,
+              text: clickValue +" Por Ano "
+            },
+            'onClick': (c,i)=> {
+              if(i[0]!=null){
+                var e = i[0] ;
+                var anoModelo = i[0]._chart.config.data.labels[e._index];
+                var machineType = i[0]._model.datasetLabel;
+                this.findBrandsbyYearMachine(anoModelo,machineType,false);
+              }
+            },
+            "animation": {
+              "duration": 500,
+              "onComplete": function() {
+              var chartInstance = this.chart,
+                ctx = chartInstance.ctx;
+                var fontSize = 16;
+                var fontStyle = 'normal';
+                var fontFamily = 'Helvetica Neue';
+                ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'bottom';
+              this.data.datasets.forEach(function(dataset, i) {																																												
+                  var meta = chartInstance.controller.getDatasetMeta(i);
+                  meta.data.forEach(function(bar, index) {
+                    var data = dataset.data[index];
+                    ctx.fillText(data, bar._model.x, bar._model.y + 0);
+                  });
+                });
+              }
+            },
+            tooltips: {
+              enabled: false
+            },
+            events: ['click'],
+            hover: {animationDuration: 0},             
+            scales: {
+              xAxes: [{
+                  ticks: {
+                      autoSkip: false,
+                      maxRotation: 90,
+                      minRotation: 90,
+                      padding: 0,
+                      min:1
+                    }
+                  }],
+                yAxes: [{
+                  ticks: {
+                      beginAtZero: true
+                  }
+                }]
+            },
+      }
+    });
+  }else{
+      this.barChartMachineByYearNoDetail.data.labels=labels;
+      this.barChartMachineByYearNoDetail.data.backgroundColor=labelColors;
+      this.barChartMachineByYearNoDetail.options.scales.xAxes[0].scaleLabel.labelString = this.getDetailByMachineType(clickValue);
+      this.barChartMachineByYearNoDetail.options.title.text= clickValue +" Por Ano "
+      var i = this.barChartMachineByYearNoDetail.data.datasets.length;
+      var dt = {
+                  label: 'Clientes',
+                  data: data,
+                  backgroundColor:labelColors
+                };
+      this.barChartMachineByYearNoDetail.data.datasets.forEach((dataset) => {
+              dataset.data=data;
+              dataset.label=clickValue;
+              dataset.backgroundColor=labelColors;
+          });
+      this.barChartMachineByYearNoDetail.update();
+    }	
+  }
+
  findByValue(clickValue){
    this.machineBrandService.findBrandByName(clickValue)
     .subscribe(item=>{
@@ -1261,18 +1399,17 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
   });
  } 
 
- findBrandsbyYearMachine(anoModelo,typeMachine){
-  var prevClickValue = localStorage.getItem('prevClickValue');
+ findBrandsbyYearMachine(anoModelo,typeMachine,hasDetail){
+  var prevClickValue = hasDetail ? localStorage.getItem('prevClickValue').trim() :"";
   localStorage.setItem('anoModelo',anoModelo);
   localStorage.setItem('typeMachine',typeMachine);
   localStorage.setItem('especificacao',prevClickValue)
-  
     if(typeMachine.trim()=='Trator'){
       this.machineBrandService
       .findOwnersByYearCvRange(
         typeMachine.trim(),
         this.getRegioes(),
-        prevClickValue.trim(),
+        prevClickValue,
         anoModelo.trim(),
         "marca",
          null).subscribe(
@@ -1286,7 +1423,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
             data[index]  = element.parqueMaquinas;
             index++;
           });
-          this.createBarChartBrandsByYear(label,data,prevClickValue,typeMachine,0);
+          this.createBarChartBrandsByYear(label,data,prevClickValue,typeMachine,hasDetail);
         });
     }else{
       this.machineBrandService
@@ -1308,7 +1445,7 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
             data[index]  = element.parqueMaquinas;
             index++;
           });
-          this.createBarChartBrandsByYear(label,data,prevClickValue,typeMachine,0);
+          this.createBarChartBrandsByYear(label,data,prevClickValue,typeMachine,hasDetail);
         });
    }
  } 
@@ -1411,8 +1548,7 @@ findChildByValue(brandName,typeMachine){
     this.loadAnoModelo();
   }
 
-  ion
-  loadSeedType(){
+ loadSeedType(){
     this.areaChartService.listAllSeedType()
     .subscribe(
       response=>{
@@ -1571,4 +1707,7 @@ findChildByValue(brandName,typeMachine){
     this.formGroup.controls.upper.setValue(ev._valB);
   }
 
+  getValueFromLocation(locationName){
+    this.formGroup.controls.agLocationName.setValue(locationName);
+  }
 }
