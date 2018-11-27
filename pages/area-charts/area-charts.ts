@@ -739,9 +739,9 @@ createBarChartCompared(labels:String[], data:number[],data2:number[],clickValue:
                   ,""
                   ,this.clientName)
                    .subscribe(resp=>{
-                    if(resp !=null && resp.length>0){
+                    if(resp !=null && resp!=undefined && resp.length>0){
                       var porteCliente = resp[0]["tamanho_cultura"];
-                      var soma = resp[0]["totalPecuaria"]+ resp[0]["totalCafe"]+resp[0]["totalHorti"]+resp[0]["totalOutros"];
+                      var soma =0; // resp[0]["totalPecuaria"]+ resp[0]["totalCafe"]+resp[0]["totalHorti"]+resp[0]["totalOutros"];
                       this.formGroup.controls.sumClientSoja.setValue( resp[0]["totalPecuaria"] != null ?  "Pecuária: "+ resp[0]["totalPecuaria"] : "");
                       this.formGroup.controls.sumClientMilho.setValue( resp[0]["totalCafe"] !=null ? "Café: "+ resp[0]["totalCafe"] : "");
                       this.formGroup.controls.sumClientAlgodao.setValue(resp[0]["totalHorti"] !=null ?  "Hortifruti: "+ resp[0]["totalHorti"] : "");
@@ -1045,9 +1045,9 @@ createBarChartMachineByBrand(labels:String[], data:number[],clickValue:string,so
                 var brandName = i[0]._chart.config.data.labels[e._index];
                 var machineType = i[0]._model.datasetLabel;
                 this.findChildByValue(brandName,machineType)
-                var posX = this.barCanvasDetailOwner.nativeElement.getBoundingClientRect().bottom
+                /* var posX = this.barCanvasDetailOwner.nativeElement.getBoundingClientRect().bottom
                 var posY = this.barCanvasMachinesByBrand.nativeElement.getBoundingClientRect().top
-                this.content.scrollTo(500,posX+posY,800)
+                this.content.scrollTo(500,posX+posY,800) */
               }
             },
             "animation": {
