@@ -171,7 +171,6 @@ export class CrudFarmPage {
       this.listFarmCultiv.splice(index,1)
       farmCultiv.farmCATotalAreaSeed =  this.formGroup.value.farmCATotalAreaSeed;
       this.listFarmCultiv.push(farmCultiv);
-      
   }
 
   updateFarmArea(farmArea){
@@ -220,8 +219,7 @@ export class CrudFarmPage {
  }
   
  saveData(){
-   console.log(this.listFarmField)  
-   console.log(this.formGroup.value.farmFieldsTotalAreaType)
+   this.navCtrl.popTo("CrudClientPage");
  }
 
  onfarmFielTypeChange(farmFielType,ffield){

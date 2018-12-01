@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ClientDTO } from '../../../models/clientDTO';
 import { WorkMachineDTO } from '../../../models/workMachineDTO';
@@ -19,7 +19,7 @@ export class CrudClientPage {
   formGroup: FormGroup;
 
   searchMarca:String;
-  agClients: ClientDTO[] = [];
+  agClients: ClientDTO [] = [];
   workMachines: WorkMachineDTO[] =[];
   agClient:ClientDTO;
   agFarms:FarmsDTO [] = [];
@@ -32,7 +32,8 @@ export class CrudClientPage {
      public viewCtrl : ViewController,
      public clientService: ClientService,
      public workMachineService: WorkMachineService,
-     public formBuiler:FormBuilder) {
+     public formBuiler:FormBuilder,
+     public alertCtrl: AlertController) {
       this.formGroup = formBuiler.group({
         clientsValue:[]=[''],
         tipoCliente:[]=[''],
@@ -82,6 +83,7 @@ export class CrudClientPage {
     this.agFarms   = this.agClients[0].farms;
     //this.populateForm(this.agClients[0])
   }
+
   showValue(client){
     alert(client.name);
   }
@@ -92,7 +94,6 @@ export class CrudClientPage {
       this.workMachine=response;
       this.navCtrl.push("WorkMachinePage",{machine:this.workMachine})
     });
-    
   }
   
   updateFilter(event,index) {
@@ -107,7 +108,8 @@ export class CrudClientPage {
   loadClients(){
    this.clientService.findAllNames()
     .subscribe(response=>{
-      this.agClients = response;      
+      if(response!=null && response!= undefined && response.length>0)
+        this.agClients = response;      
     },
     error=>{console.log(error)})
   }
@@ -119,8 +121,7 @@ export class CrudClientPage {
     this.clientService.findAllFarmsByClientId(event.value.id).
     subscribe(
       response=> {
-        this.agFarms = response,
-        console.log(this.agFarms)
+        this.agFarms = response
       }
     )        
   }
@@ -130,7 +131,6 @@ export class CrudClientPage {
       value: any,
     }) { 
       if(event.value!=null){
-        console.log(event.value)
         this.formGroup.controls.farmsLocation.setValue(event.value.farmLocation.locationName),
         this.formGroup.controls.clientPhoneNumber.setValue(event.value.phoneNumber),
         this.formGroup.controls.clientObs.setValue(event.value.generalObs),
@@ -148,14 +148,12 @@ export class CrudClientPage {
         });
 
         this.formGroup.controls.farmCultivAreas.setValue(event.value.farmCultivAreas),
-        console.log(event.value.farmCultivAreas);
         this.formGroup.value.farmCultivAreas.forEach(element => {
           this.formGroup.controls.farmSeed.setValue(element.farmSeed.seedName),
           this.formGroup.controls.farmTotalAreaSeed.setValue(element.totalAreaSeed)
         });
 
         this.formGroup.controls.workMachines.setValue(event.value.workMachines),
-        console.log(event.value.workMachines),
         this.formGroup.value.workMachines.forEach(element => {
           this.formGroup.controls.typeMachine.setValue(element.typeMachine.typeName),
           this.formGroup.controls.machineBrand.setValue(element.machineModel.machineBrand.name),
@@ -183,5 +181,38 @@ export class CrudClientPage {
     this.navCtrl.push("CrudFarmPage",data);
     
   }
+  fromFormToObject(){
+    this.agClients[0].name       = this.formGroup.value.clientsValue;
+    this.agClients[0].farms = this.agFarms;
+    //this.agClients[0].typeClient = this.formGroup.value.tipoCliente;
+  }
+
+  saveData(){
+    this.fromFormToObject();
+    this.clientService.saveClient(this.agClients[0])
+    .subscribe(response => {
+      this.showInsertOk();
+    },
+    error => {});
+  }  
+  
+  showInsertOk() {
+    let alert = this.alertCtrl.create({
+      title: 'Sucesso!',
+      message: 'Cadastro efetuado com sucesso',
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    });
+
+  }
+
+  
 
 }

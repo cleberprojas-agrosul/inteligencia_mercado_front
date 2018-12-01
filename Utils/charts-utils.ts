@@ -20,7 +20,11 @@ export class ChartUtils{
     static readonly CULTIV_TYPE_OUTROS   = "Outros";
 
 
-    static readonly MACHINE_TYPE_TRACTOR   = "Trator";
+    static readonly MACHINE_TYPE_TRACTOR     = "Trator";
+    static readonly MACHINE_TYPE_HARVESTER   = "Colheitadeira";
+    static readonly MACHINE_TYPE_PLANTER     = "Plantadeira";
+    static readonly MACHINE_TYPE_SPRAYER     = "Pulverizador";
+    static readonly MACHINE_TYPE_COTTON      = "Cotton";
 
 
 }

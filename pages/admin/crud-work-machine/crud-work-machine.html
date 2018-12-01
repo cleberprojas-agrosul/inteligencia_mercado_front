@@ -14,6 +14,17 @@
   <form  [formGroup]="formGroup">
       <ion-grid>
         <ion-row>
+        <ion-col>
+            <ion-item>
+                <ion-label>Tipo Equipamento</ion-label>
+                <ion-select class="edit-select" multiple="false" formControlName="wmTypeMachineId">
+                    <ion-option *ngFor="let type of this.listAllMachineTypes"  (ionSelect)="updateSelectTypeMachine(type)"
+                                [selected]="type.id == wmTypeMachineId"    
+                                value="{{type.id}}" >{{type.typeName}}
+                    </ion-option>
+                  </ion-select>
+              </ion-item>
+          </ion-col>
           <ion-col>
             <ion-item>
                 <ion-label>Marca</ion-label>
@@ -29,25 +40,51 @@
             <ion-item>
                 <ion-label>Modelo</ion-label>
                 <ion-select class="edit-select" multiple="false" formControlName="wmMachineModelId">
-                    <ion-option *ngFor="let model of this.listAllModels" 
+                    <ion-option *ngFor="let model of this.listAllModels" (ionSelect)="updateSelectModel(model)"
                                 [selected]="model.id == wmMachineModelId"    
                                 value="{{model.id}}" >{{model.name}}
                     </ion-option>
                  </ion-select>
             </ion-item>
           </ion-col>
+       
           <ion-col>
             <ion-item>
-                <ion-label>Tipo Equipamento</ion-label>
-                <ion-select class="edit-select" multiple="false" formControlName="wmTypeMachineId">
-                    <ion-option *ngFor="let type of this.listAllMachineTypes" 
-                                [selected]="type.id == wmTypeMachineId"    
-                                value="{{type.id}}" >{{type.typeName}}
-                    </ion-option>
-                 </ion-select>
-              </ion-item>
+              <ion-label>Quantidade</ion-label>
+              <ion-input type="text" formControlName="wmMachineQtd" ></ion-input>
+            </ion-item>
           </ion-col>
         </ion-row>
+        
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label>Ano</ion-label>
+              <ion-input type="text" formControlName="wmMachineYear" ></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>Concessionária</ion-label>
+              <ion-input type="text" formControlName="wmMachineName" ></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>{{lblDetailOne}}</ion-label>
+              <ion-input type="text" formControlName="wmDetailOne" ></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label>{{lblDetailTwo}}</ion-label>
+              <ion-input type="text" formControlName="wmDetailTwo" ></ion-input>
+            </ion-item>
+          </ion-col>
+       </ion-row>
       </ion-grid>
+      <ion-col col-4>
+          <button ion-button round small outline  (click)="saveWorkMachine()">Salvar</button>
+    </ion-col>
   </form>
 </ion-content>

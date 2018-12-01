@@ -50,5 +50,17 @@ export class ClientService{
     findClientsByColorClass(regiao:number[],porte:String,tamArea:String): Observable<AgrosulClassificationDTO[]>{
         return this.http.get<AgrosulClassificationDTO[]>(`${this.basePath}/client/findClientsByColorClass?regiao=${regiao}&porte=${porte}&tamArea=${tamArea}`)
     }
+
+    saveClient(obj : ClientDTO) {
+        console.log(obj)
+        return this.http.post(
+            `${this.basePath}/client/register`, 
+            obj,
+            { 
+                observe: 'response', 
+                responseType: 'text'
+            }
+        ); 
+    }
     
 }
