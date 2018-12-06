@@ -25,6 +25,7 @@ import { AreaChartsDetailPage } from '../pages/area-charts-detail/area-charts-de
 import { UserService } from '../services/domain/user.service';
 import { WorkMachineService } from '../services/domain/workMachine.service';
 import { HomePage } from '../pages/home/home';
+import { TypeClientService } from '../services/domain/typeClient.service';
 
 
 @NgModule({
@@ -64,6 +65,7 @@ import { HomePage } from '../pages/home/home';
     ClientService,
     AreaChartService,
     UserService,
+    TypeClientService,
     WorkMachineService
   ]
 })

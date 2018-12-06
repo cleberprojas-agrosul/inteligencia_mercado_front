@@ -92,4 +92,9 @@ export class ClientTablePage {
         this.navCtrl.push('CrudClientPage',data);
     });    
   }
+
+  addClient(){
+    this.navCtrl.push('CrudClientPage');
+  }
+
 }

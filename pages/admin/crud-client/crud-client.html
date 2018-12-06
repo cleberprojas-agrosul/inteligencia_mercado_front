@@ -36,14 +36,24 @@
                             value="{{client.typeClient.typeName}}"
                             type="text">
                      </ion-input>
+                     <ion-select class="edit-select" multiple="false" formControlName="tipoCliente" >
+                        <ion-option *ngFor="let typeClient of typeClientList" 
+                                    [selected]="typeClient.typeName == client.typeClient.typeName"    
+                                    value="{{typeClient.id}}" >{{typeClient.typeName}}
+                        </ion-option>
+                     </ion-select>
                     </ion-item>
                     </ion-col>
                     <ion-col>
-                       <ion-label stacked>Cliente Agrosul?</ion-label>
-                       <ion-item>
-                        <ion-label stacked color="secondary" *ngIf="client.isClienteAgrosul==true">Sim</ion-label>
-                        <ion-label stacked color="danger" *ngIf="client.isClienteAgrosul==false">Não</ion-label>
-                      </ion-item>
+                    <ion-label stacked> Cliente Agrosul? </ion-label>
+                    <ion-select class="edit-select" multiple="false" formControlName="isClientAgrosul" >
+                        <ion-option [selected]="client.isClient == true"    
+                                    value="true" >Sim
+                        </ion-option>
+                        <ion-option [selected]="client.isClient == false"    
+                                    value="false" >Não
+                        </ion-option>
+                    </ion-select>
                     </ion-col> 
                   </ion-row>
                 <ion-card>

@@ -8,6 +8,9 @@ import { ViewController } from 'ionic-angular/navigation/view-controller';
 import { ClientService } from '../../../services/domain/client.service';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { WorkMachineService } from '../../../services/domain/workMachine.service';
+import { TypeClientService } from '../../../services/domain/typeClient.service';
+import { TypeClientDTO } from '../../../models/typeClientDTO';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @IonicPage()
 @Component({
@@ -25,12 +28,13 @@ export class CrudClientPage {
   agFarms:FarmsDTO [] = [];
   detailFarmDTO:FarmsDTO;
   workMachine:WorkMachineDTO;
-
+  typeClientList:TypeClientDTO[] = [];
   constructor(
      public navCtrl: NavController,
      public navParams: NavParams,
      public viewCtrl : ViewController,
      public clientService: ClientService,
+     public typeClientService: TypeClientService,
      public workMachineService: WorkMachineService,
      public formBuiler:FormBuilder,
      public alertCtrl: AlertController) {
@@ -41,6 +45,7 @@ export class CrudClientPage {
         farmsDetail:[]=[0],
         farmsDetailName:[] = [],
         farmsLocation:[] = [],
+        isClientAgrosul:[] = [true],
         
         clientPhoneNumber:[] = [],
         clientObs:[] = [],
@@ -79,9 +84,14 @@ export class CrudClientPage {
   }
 
   ionViewDidLoad() {
+    this.loadClientTypes();
     this.agClients = this.navParams.get('selectedClient');
-    this.agFarms   = this.agClients[0].farms;
-    //this.populateForm(this.agClients[0])
+    if(this.agClients!=null && this.agClients!=undefined){
+      this.populateForm(this.agClients[0])
+      this.agFarms   = this.agClients[0].farms;
+    }
+   
+    
   }
 
   showValue(client){
@@ -112,6 +122,14 @@ export class CrudClientPage {
         this.agClients = response;      
     },
     error=>{console.log(error)})
+  }
+
+  loadClientTypes(){
+    this.typeClientService.findAll()
+    .subscribe(response=>{
+      console.log(response);
+      this.typeClientList = response;
+    });
   }
 
   clientChange(event: {
@@ -163,10 +181,13 @@ export class CrudClientPage {
   } 
 
   populateForm(client:ClientDTO){
-    this.formGroup.controls.farms.setValue(client.farms);
-    
+     this.formGroup.controls.clientsValue.setValue(client.name);
+     this.formGroup.controls.tipoCliente.setValue(client.typeClient.typeName)
+     this.formGroup.controls.isClientAgrosul.setValue(client.isClienteAgrosul);
    
   }
+
+
   public closeModal(){
       this.viewCtrl.dismiss();
   }
@@ -181,6 +202,7 @@ export class CrudClientPage {
     this.navCtrl.push("CrudFarmPage",data);
     
   }
+
   fromFormToObject(){
     this.agClients[0].name       = this.formGroup.value.clientsValue;
     this.agClients[0].farms = this.agFarms;
@@ -188,12 +210,13 @@ export class CrudClientPage {
   }
 
   saveData(){
-    this.fromFormToObject();
+    console.log(this.formGroup)
+   /*  this.fromFormToObject();
     this.clientService.saveClient(this.agClients[0])
     .subscribe(response => {
       this.showInsertOk();
     },
-    error => {});
+    error => {}); */
   }  
   
   showInsertOk() {
