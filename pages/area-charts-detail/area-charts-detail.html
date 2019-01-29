@@ -5,8 +5,8 @@
            <ion-col  >
                 <ion-item>
                     <ion-label stacked>Região Agrosul</ion-label>
-                        <ion-select multiple="true" formControlName="agLocationValue"  >
-                        <ion-option *ngFor="let agLoc of agLocation" (ionSelect)="setLocationName(agLoc.locationName)"
+                        <ion-select multiple="true"  formControlName="agLocationValue"  >
+                        <ion-option   *ngFor="let agLoc of agLocation" (ionSelect)="setLocationName(agLoc.locationName)"
                                     value="{{agLoc.id}}" >{{agLoc.locationName}}
                         </ion-option>
                         </ion-select>

@@ -1238,6 +1238,7 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
  }
 
  getRegioes(){
+    this.selectLocation();
     var regioes=[0];
     if( this.formGroup.value.agLocationValue=='901'){
       regioes=[2,3,4,5,6,7,8,9,10,11,12,13,14];
@@ -1248,7 +1249,16 @@ createBarChartDetail(labels:String[], data:number[],clickValue:string){
     }
     return regioes;
   }
- 
+
+ selectLocation(){
+    if(this.formGroup.value.agLocationValue != undefined 
+      && this.formGroup.value.agLocationValue != null
+      && this.formGroup.value.agLocationValue.length == 0){
+        this.formGroup.controls.agLocationValue.setValue(this.agLocation[0].id) 
+      
+   }
+  }
+
   defineTypeClient(porteCliente,tamArea){
     var agClientClassification:AgrosulClassificationDTO[];
     localStorage.setItem('tamArea',tamArea);

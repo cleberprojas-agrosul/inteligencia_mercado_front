@@ -1678,6 +1678,7 @@ findChildByValue(brandName,typeMachine){
   }
 
   getRegioes(){
+    this.selectLocation();
     var regioes=[0];
     if( this.formGroup.value.agLocationValue=='901'){
       regioes=[2,3,4,5,6,7,8,9,10,11,12,13,14];
@@ -1687,6 +1688,14 @@ findChildByValue(brandName,typeMachine){
       regioes = this.formGroup.value.agLocationValue
     }
     return regioes;
+  }
+
+ selectLocation(){
+    if(this.formGroup.value.agLocationValue != undefined 
+      && this.formGroup.value.agLocationValue != null
+      && this.formGroup.value.agLocationValue.length == 0){
+        this.formGroup.controls.agLocationValue.setValue(this.agLocation[0].id) 
+    }
   }
 
   getDetailByMachineType(clickValue){

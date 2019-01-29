@@ -9,6 +9,7 @@ import { FarmSeedDTO } from '../../../models/farmSeedDTO';
 import { FarmAreaDTO } from '../../../models/farmAreaDTO';
 import { FarmAreaTypeDTO } from '../../../models/farmAreaTypeDTO';
 import { WorkMachineDTO } from '../../../models/workMachineDTO';
+import { AreaChartService } from '../../../services/domain/area-chart.service';
 
 /**
  * Generated class for the CrudFarmPage page.
@@ -37,6 +38,7 @@ export class CrudFarmPage {
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
+              public areaCharService:AreaChartService,
               public formBuiler:FormBuilder ) {
                 this.formGroup = formBuiler.group({
                 
@@ -137,7 +139,7 @@ export class CrudFarmPage {
     //farm Cultiv Areas -  Milho,Soja,Algodao etc...
     this.agFarms[0].farmCultivAreas.forEach(fca=>{
       this.listFarmCultiv.push(fca);
-      this.farmSeeds.push(fca.farmSeed);
+      //this.farmSeeds.push(fca.farmSeed);
       this.formGroup.controls.farmCATotalAreaSeed.setValue(fca.totalAreaSeed);
       this.formGroup.controls.farmCAHarvestNum.setValue(fca.harvestNum);
       this.formGroup.controls.farmSeed.setValue(fca.farmSeed);
@@ -213,9 +215,11 @@ export class CrudFarmPage {
  }
 
  loadSeeds(){
-  /*TODO 
-    chamar servico para carregar tipos de cultura - algoda, soja, milho etc
-   */
+   this.areaCharService.listAllSeedType().subscribe(
+     response=>{
+      this.farmSeeds = response
+     }
+   );
  }
   
  saveData(){
