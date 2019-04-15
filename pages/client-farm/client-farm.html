@@ -1,0 +1,83 @@
+<ion-content padding>
+  <ion-card>
+    <ion-list *ngFor="let farm of agFarms; first as isFirst;index as i">
+      <ion-row>
+        <ion-col style="background-color: rgb(187, 250, 187); text-align: center;font-weight: bold">
+          Fazenda {{farm.farmName}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-label stacked> Nome </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Localização </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Area - Ha</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Tipo - Ha</ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Cultivo - Ha </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Area: Total - Produtiva </ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+
+        <ion-col>
+          <ion-item>
+            <ion-input readonly="true" value="{{farm.farmName}}" type="text">
+            </ion-input>
+          </ion-item>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-input readonly="true" value="{{farm.agrosulLocation.locationName}}" type="text">
+            </ion-input>
+          </ion-item>
+        </ion-col>
+
+        <ion-col>
+          <ion-list *ngFor="let area of farm.farmAreas">
+            <ion-item>
+              <ion-input readonly="true" value="{{area.farmAreaType.typeName}} - {{area.totalArea}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+        <ion-col>
+          <ion-list *ngFor="let farmFields of farm.farmFields">
+            <ion-item>
+              <ion-input readonly="true" value="{{farmFields.farmFielType.typeName}} - {{farmFields.totalAreaType}}"
+                type="text">
+              </ion-input>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+        <ion-col>
+          <ion-list *ngFor="let cultiv of farm.farmCultivAreas">
+            <ion-item *ngIf="cultiv.harvestNum ==1">
+              <ion-input readonly="true" value="{{cultiv.farmSeed.seedName}} - {{cultiv.totalAreaSeed}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-list>
+        </ion-col>
+
+        <ion-col>
+          <ion-item>
+            <ion-input readonly="true" value="{{farm.totalArea}} - {{farm.totalAreaType}} " type="text">
+            </ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+  </ion-list>
+</ion-card>
+</ion-content>

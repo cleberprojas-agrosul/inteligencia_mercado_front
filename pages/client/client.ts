@@ -78,11 +78,13 @@ export class ClientPage {
       sprayerBarLength: [] = [0],
       tractorHorsePower: [] = [0],
     });
+
+    this.agClients[0] = this.navParams.data;
+    this.agFarms =  this.agClients[0].farms;
   }
 
   ionViewDidLoad() {
-    this.agClients = this.navParams.get('selectedClient');
-    this.agFarms = this.agClients[0].farms;
+  
   }
 
   updateFilter(event, index) {
@@ -157,9 +159,4 @@ export class ClientPage {
   onInput($event) {
     console.log($event)
   }
-
-  segmentChanged(ev: any) {
-    console.log('Segment changed', ev);
-  }
-
 }

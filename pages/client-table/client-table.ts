@@ -4,6 +4,7 @@ import { ClientService } from '../../services/domain/client.service';
 import { ClientDTO } from '../../models/clientDTO';
 import { AgrosulLocationService } from '../../services/domain/agrosulLocation.service';
 import { AgrosulLocationDTO } from '../../models/agrosulLocationDTO';
+import { Observable } from 'rxjs';
 
 /**
  * Generated class for the ClientTablePage page.
@@ -75,13 +76,12 @@ export class ClientTablePage {
     this.rows = temp;
   }
 
-  open(row){
+  async open(row){
     var data:any;
-    this.clientService.findById(row.id).subscribe(response=>{
-        var cli : ClientDTO[] =[response];
-        data = { selectedClient :cli };
-        this.navCtrl.push('ClientPage',data);
-    });    
+    var cli :  ClientDTO ; 
+    cli  = await this.clientService.findById(row.id).toPromise();
+    data = { selectedClient :cli };
+    this.navCtrl.push('ClientHoldTabsPage',data);
   }
 
   edit(row){

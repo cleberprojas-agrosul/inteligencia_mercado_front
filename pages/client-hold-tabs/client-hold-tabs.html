@@ -13,11 +13,12 @@
 </ion-header>
 
 
-<ion-content padding>
- <ion-tabs #clientTabs tabsPlacement="top">
-        <ion-tab [root]="tab2Root" [rootParams]="tab2Params" tabTitle="Dados" tabIcon="leaf"></ion-tab>
-        <ion-tab [root]="tab1Root" tabTitle="Frota" tabIcon="home"></ion-tab>
-        <ion-tab [root]="tab3Root" tabTitle="Fazendas" tabIcon="contacts"></ion-tab>
+<ion-content padding >
+ <ion-tabs #clientTabs tabsPlacement="bottom">
+        <ion-tab [root]="tab1Root"  [rootParams]="selectedClient" tabTitle="Detalhes" tabIcon="copy"></ion-tab>
+        <ion-tab [root]="tab2Root"  [rootParams]="selectedClient" tabTitle="Fazendas" tabIcon="leaf"></ion-tab>
+        <ion-tab [root]="tab3Root"  [rootParams]="selectedClient" tabTitle="Frota" tabIcon="cog"></ion-tab>
+
  </ion-tabs>
 
 </ion-content>

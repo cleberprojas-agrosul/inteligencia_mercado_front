@@ -1,0 +1,74 @@
+<ion-content padding >
+
+  <ion-card>
+    <ion-list *ngFor="let farm of agFarms; first as isFirst;index as i">
+      <ion-row>
+        <ion-col style="background-color: rgb(187, 250, 187); text-align: center;font-weight: bold">
+          Parque de Máquinas  {{farm.farmName}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-label stacked> Marca </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Concessionária </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Tipo </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Modelo </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Ano </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-label stacked> Quantidade </ion-label>
+        </ion-col>
+      </ion-row>
+
+      <ion-list *ngFor="let machine of agFarms[i].workMachines">
+        <ion-row class="item-list">
+          <ion-col class="col">
+            <ion-item>
+              <ion-input readonly="true" value="{{machine.machineModel.machineBrand.name}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input readonly="true" value="{{machine.name}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input readonly="true" value="{{machine.typeMachine.typeName}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input readonly="true" value="{{machine.machineModel.name}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input readonly="true" value="{{machine.machineYear}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-input readonly="true" value="{{machine.machineQtd}}" type="text">
+              </ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-list>
+
+    </ion-list>
+  </ion-card>
+</ion-content>

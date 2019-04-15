@@ -187,6 +187,7 @@ export class AreaChartsDetailPage {
       sumMaquinas: [] = [0],
       AllBrands: [] = [""],
       clientName: " ",
+      clientId: "",
       lastbrandName: "",
       lastTypeMachine: "",
     });
@@ -1071,6 +1072,7 @@ export class AreaChartsDetailPage {
                   , this.clientName)
                 .subscribe(resp => {
                   if (resp != null && resp != undefined && resp.length > 0) {
+                    this.formGroup.controls.clientId.setValue(resp[0]["proprietario_id"])
                     this.formGroup.controls.sumClientCultiv1.setValue(resp[0]["totalPecuaria"] != null ? "Pecuária: " + resp[0]["totalPecuaria"] : "")
                     this.formGroup.controls.sumClientCultiv2.setValue(resp[0]["totalHorti"] != null ? "Hortifruti: " + resp[0]["totalHorti"] : "")
                     this.formGroup.controls.sumClientCultiv3.setValue(resp[0]["totalCafe"] != null ? "Café: " + resp[0]["totalCafe"] : "")
@@ -1459,7 +1461,6 @@ export class AreaChartsDetailPage {
                 this.classPorCor,
                 ""
               ).subscribe(response => {
-                console.log(this.porteCliente)
                 response.forEach(element => {
                   var somaAreaCultivada = this.calcAreaClient(element, this.porteCliente);
                   label[index] = element['proprietario'];
@@ -1663,6 +1664,15 @@ export class AreaChartsDetailPage {
       return response["totalMilho"] + response["totalSoja"] + response["totalAlgodao"] + response["totalFeijao"];
     }
     return response["totalHorti"] + response["totalPecuaria"] + response["totalCafe"] + response["totalOutros"];
+  }
+
+  async goToDetail(){
+    var data:any;
+    var cli :  ClientDTO ; 
+    let id = this.formGroup.value.clientId;
+    cli  = await this.clientService.findById(id).toPromise();
+    data = { selectedClient :cli };
+    this.navCtrl.push('ClientHoldTabsPage',data);
   }
 
 }

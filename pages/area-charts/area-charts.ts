@@ -129,6 +129,7 @@ export class AreaChartsPage {
       mediaMaquinaGp: [] = [0],
       AllBrands: [] = [""],
       clientName: " ",
+      clientId: " ",
       lastbrandName: "",
       lastTypeMachine: "",
       anoMaquinaValue: [] = [],
@@ -546,7 +547,6 @@ export class AreaChartsPage {
   }
 
   findMachinesByYear(toFindValue, typeMachine) {
-    console.log(toFindValue, typeMachine)
     if (typeMachine.trim() == 'Trator') {
       this.machineBrandService.findMachinesByYearCvRange(
         typeMachine.trim(),
@@ -740,6 +740,7 @@ export class AreaChartsPage {
                 .subscribe(resp => {
                   if (resp != null && resp != undefined && resp.length > 0) {
                     var porteCliente = resp[0]["tamanho_cultura"];
+                    this.formGroup.controls.clientId.setValue( resp[0]["proprietario_id"])
                     var soma = 0; // resp[0]["totalPecuaria"]+ resp[0]["totalCafe"]+resp[0]["totalHorti"]+resp[0]["totalOutros"];
                     this.formGroup.controls.sumClientSoja.setValue(resp[0]["totalPecuaria"] != null ? "Pecuária: " + resp[0]["totalPecuaria"] : "");
                     this.formGroup.controls.sumClientMilho.setValue(resp[0]["totalCafe"] != null ? "Café: " + resp[0]["totalCafe"] : "");
@@ -1022,7 +1023,6 @@ export class AreaChartsPage {
     var labelColors: String[] = [];
     var i = 0;
     labelColors = this.getBackgroundColors(labels);
-    console.log(data)
     if (this.barChartMachineByBrand == null) {
       this.barChartMachineByBrand = new Chart(this.barCanvasMachinesByBrand.nativeElement, {
         type: 'bar',
@@ -1706,6 +1706,15 @@ export class AreaChartsPage {
       return ' Metros '
     else if (clickValue.trim() == 'Cotton')
       return ' Tipo '
+  }
+
+  async goToDetail(){
+    var data:any;
+    var cli :  ClientDTO ; 
+    let id = this.formGroup.value.clientId;
+    cli  = await this.clientService.findById(id).toPromise();
+    data = { selectedClient :cli };
+    this.navCtrl.push('ClientHoldTabsPage',data);
   }
 
   onChange(ev: any) {

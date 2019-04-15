@@ -5,6 +5,8 @@ import { ClientTablePage } from '../client-table/client-table';
 import { ClientPage } from '../client/client';
 import { ClientDTO } from '../../models/clientDTO';
 import { FarmsDTO } from '../../models/farmsDTO';
+import { ClientFarmPage } from '../client-farm/client-farm';
+import { ClientMachinesPage } from '../client-machines/client-machines';
 /**
  * Generated class for the ClientHoldTabsPage page.
  *
@@ -18,19 +20,18 @@ import { FarmsDTO } from '../../models/farmsDTO';
   templateUrl: 'client-hold-tabs.html',
 })
 export class ClientHoldTabsPage {
-
-  tab1Root = AreaChartsDetailPage;
-  tab2Root = ClientPage;
-  tab3Root = ClientTablePage;
   agClients: ClientDTO[] = [];
   agFarms: FarmsDTO[] = [];
+  agClient: ClientDTO;
+
+  tab1Root = ClientPage;
+  tab2Root = ClientFarmPage;
+  tab3Root = ClientMachinesPage;
+  selectedClient : ClientDTO = this.navParams.get('selectedClient');
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    this.agClients = this.navParams.get('selectedClient');
-    this.agFarms   = this.agClients[0].farms;
-    console.log('ionViewDidLoad ClientHoldTabsPage');
   }
 
 }
