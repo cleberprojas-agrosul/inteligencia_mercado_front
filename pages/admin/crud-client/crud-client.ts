@@ -10,7 +10,6 @@ import { IonicSelectableComponent } from 'ionic-selectable';
 import { WorkMachineService } from '../../../services/domain/workMachine.service';
 import { TypeClientService } from '../../../services/domain/typeClient.service';
 import { TypeClientDTO } from '../../../models/typeClientDTO';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @IonicPage()
 @Component({

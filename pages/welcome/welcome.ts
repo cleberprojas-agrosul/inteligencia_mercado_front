@@ -4,11 +4,9 @@ import { AreaChartService } from '../../services/domain/area-chart.service';
 import { Chart } from 'chart.js';
 import { ColorChartUtils } from '../../Utils/color-charts-utils';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { MachineChartsPage } from '../machine-charts/machine-charts';
 import { AreaChartsPage } from '../area-charts/area-charts';
 import { ClientTablePage } from '../client-table/client-table';
 import { AreaChartsDetailPage } from '../area-charts-detail/area-charts-detail';
-import { HomePage } from '../home/home';
 
 /**
  * Generated class for the WelcomePage page.

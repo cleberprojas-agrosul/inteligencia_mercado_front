@@ -17,10 +17,10 @@
       <ion-col col-4></ion-col>
     <ion-col col-4>
       <input
-      type='text'
-      style='width:100%;'
-      placeholder='Digite um nome para buscar...'
-      (keyup)='updateFilter($event)'
+        type='text'
+        style='width:100%;'
+        placeholder='Digite um nome para buscar...'
+        (keyup)='updateFilter($event)'
       />
     </ion-col>
     <ion-col col-4></ion-col>
@@ -39,14 +39,6 @@
         <button ion-button round small outline  (click)="open(row)">ir</button>
       </ng-template>
     </ngx-datatable-column>
-    <ngx-datatable-column name="idCliente" [resizeable]="false">
-        <ng-template ngx-datatable-header-template>
-          Editar
-        </ng-template>
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <button ion-button round small outline  (click)="edit(row)">ir</button>
-        </ng-template>
-      </ngx-datatable-column>
-
+   
   </ngx-datatable>
 </ion-content>

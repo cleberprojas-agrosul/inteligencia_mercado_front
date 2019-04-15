@@ -3,8 +3,6 @@ import { HttpClient } from "@angular/common/http";
 import { API_CONFIG } from "../../config/api.config";
 import { Observable } from "rxjs/Rx";
 import { Platform } from "ionic-angular/platform/platform";
-import { ClientDTO } from "../../models/clientDTO";
-import { FarmsDTO } from "../../models/farmsDTO";
 import { CredenciaisDTO } from "../../models/credenciasDTO";
 import { UserDTO } from "../../models/userDTO";
 

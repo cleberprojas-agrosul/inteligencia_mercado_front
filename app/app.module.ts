@@ -26,6 +26,7 @@ import { UserService } from '../services/domain/user.service';
 import { WorkMachineService } from '../services/domain/workMachine.service';
 import { HomePage } from '../pages/home/home';
 import { TypeClientService } from '../services/domain/typeClient.service';
+import { ClientPage } from '../pages/client/client';
 
 
 @NgModule({
@@ -33,7 +34,7 @@ import { TypeClientService } from '../services/domain/typeClient.service';
     MyApp,
     AreaChartsDetailPage,
     AreaChartsPage,
-    ClientTablePage
+    ClientTablePage   
   ],
   imports: [
     BrowserModule,

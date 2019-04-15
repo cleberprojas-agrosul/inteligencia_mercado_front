@@ -2,9 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { API_CONFIG } from "../../config/api.config";
 import { Observable } from "rxjs/Rx";
-
 import { Platform } from "ionic-angular/platform/platform";
-import { MachineModelChartDTO } from "../../models/charts/machineModelChartDTO";
 import { SeedTypeDTO } from "../../models/seedTypeDTO";
 import { AreaChartDTO } from "../../models/charts/areaChartDTO";
 import { AreaFilterDTO } from "../../models/areaFilterDTO";

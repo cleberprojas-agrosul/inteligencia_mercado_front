@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { WorkMachineDTO } from '../../../models/workMachineDTO';
-import { ToggleGesture } from 'ionic-angular/umd/components/toggle/toggle-gesture';
 import { MachineBrandService } from '../../../services/domain/machineBrand.service';
 import { MachineModelService } from '../../../services/domain/machineModel.service';
 import { MachineBrandDTO } from '../../../models/machineBrandDTO';
@@ -10,7 +9,6 @@ import { MachineModelDTO } from '../../../models/machineModelDTO';
 import { MachineTypeService } from '../../../services/domain/machineType.service';
 import { MachineTypeDTO } from '../../../models/machineTypeDTO';
 import { ChartUtils } from '../../../Utils/charts-utils';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @IonicPage()
 @Component({

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-
 import { MachineModelService} from '../../services/domain/machineModel.service';
 import { MachineModelDTO } from '../../models/machineModelDTO';
 
