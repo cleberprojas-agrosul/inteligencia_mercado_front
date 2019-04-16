@@ -19,9 +19,6 @@ import { MachineBrandDTO } from '../../models/machineBrandDTO';
 import { AgrosulClassificationDTO } from '../../models/agrosulClassificationDTO';
 import { ChartUtils } from '../../Utils/charts-utils';
 
-
-
-
 @IonicPage()
 @Component({
   selector: 'page-area-charts-detail',
@@ -39,18 +36,14 @@ export class AreaChartsDetailPage {
 
   @ViewChild('pieCanvasAreaTotal') pieCanvasAreaTotal;
 
-
   @ViewChild('pieCanvasLocation') pieCanvasLocation;
 
   @ViewChild('pieCanvasClientTamArea') pieCanvasClientTamArea;
-
 
   @ViewChild('barCanvasCompared') barCanvasCompared;
   @ViewChild('barCanvasDetail') barCanvasDetail;
   @ViewChild('barCanvasDetailOwner') barCanvasDetailOwner;
   @ViewChild('filtersSel') filtersSel;
-
-
 
   formGroup: FormGroup;
 
@@ -509,7 +502,6 @@ export class AreaChartsDetailPage {
                 for (var i = 0; i < dataset.data.length; i++) {
                   var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
                     total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-                    //mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
                     mid_radius = model.outerRadius - 20,
                     start_angle = model.startAngle,
                     end_angle = model.endAngle,
@@ -710,19 +702,21 @@ export class AreaChartsDetailPage {
     });
   }
 
-  generateAreaProdInfo(porteCliente) {
-    this.areaChartService.getTotalAreaCultivGP(
+
+  async generateAreaProdInfo(porteCliente){
+   let areaChart: AreaChartDTO[] = [];
+   areaChart = await this.areaChartService.getTotalAreaCultivGP(
       this.getRegioes(),
       porteCliente
-    ).subscribe(response => {
-      this.totalAreaGP = this.calcAreaClient(response[0], this.porteCliente);
-      if (porteCliente == ChartUtils.CLASSF_GP) {
-        this.totalAlgodaoArea = response[0]["totalAlgodao"];
-        this.formGroup.controls.sumGP.setValue(this.formatarNumero(this.totalAreaGP))
-      } else {
-        this.formGroup.controls.sumPP.setValue(this.formatarNumero(this.totalAreaPP))
-      }
-    });
+   ).toPromise();
+   let total = this.calcAreaClient(areaChart[0], porteCliente);
+   if (porteCliente == ChartUtils.CLASSF_GP) {
+        this.totalAreaGP = total;
+        this.totalAlgodaoArea = areaChart[0]["totalAlgodao"];
+        this.formGroup.controls.sumGP.setValue(this.formatarNumero(total))
+   }else{
+        this.formGroup.controls.sumPP.setValue(this.formatarNumero(total))
+   }
   }
 
   generateAgrosulAreaProdInfo(porteCliente) {
@@ -1666,13 +1660,13 @@ export class AreaChartsDetailPage {
     return response["totalHorti"] + response["totalPecuaria"] + response["totalCafe"] + response["totalOutros"];
   }
 
-  async goToDetail(){
-    var data:any;
-    var cli :  ClientDTO ; 
+  async goToDetail() {
+    var data: any;
+    var cli: ClientDTO;
     let id = this.formGroup.value.clientId;
-    cli  = await this.clientService.findById(id).toPromise();
-    data = { selectedClient :cli };
-    this.navCtrl.push('ClientHoldTabsPage',data);
+    cli = await this.clientService.findById(id).toPromise();
+    data = { selectedClient: cli };
+    this.navCtrl.push('ClientHoldTabsPage', data);
   }
 
 }
