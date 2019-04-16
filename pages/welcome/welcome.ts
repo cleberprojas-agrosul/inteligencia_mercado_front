@@ -7,6 +7,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { AreaChartsPage } from '../area-charts/area-charts';
 import { ClientTablePage } from '../client-table/client-table';
 import { AreaChartsDetailPage } from '../area-charts-detail/area-charts-detail';
+import { ClientSegmentationPage } from '../client-segmentation/client-segmentation';
 
 /**
  * Generated class for the WelcomePage page.
@@ -35,7 +36,7 @@ export class WelcomePage {
   
   tab1Root = AreaChartsPage;
   tab2Root = AreaChartsDetailPage;
-  tab3Root = ClientTablePage;
+  tab3Root = ClientSegmentationPage;
   tab2Params = { userID:''  }
   constructor(public navCtrl: NavController, 
     public navParams: NavParams,

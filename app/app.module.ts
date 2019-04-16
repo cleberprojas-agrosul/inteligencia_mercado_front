@@ -29,6 +29,7 @@ import { TypeClientService } from '../services/domain/typeClient.service';
 import { ClientPage } from '../pages/client/client';
 import { ClientFarmPage } from '../pages/client-farm/client-farm';
 import { ClientMachinesPage } from '../pages/client-machines/client-machines';
+import { ClientSegmentationPage } from '../pages/client-segmentation/client-segmentation';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { ClientMachinesPage } from '../pages/client-machines/client-machines';
     ClientTablePage,
     ClientPage,
     ClientFarmPage,
-    ClientMachinesPage   
+    ClientMachinesPage,
+    ClientSegmentationPage   
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,8 @@ import { ClientMachinesPage } from '../pages/client-machines/client-machines';
     ClientTablePage,
     ClientPage,
     ClientFarmPage,
-    ClientMachinesPage
+    ClientMachinesPage,
+    ClientSegmentationPage
 
    ],
   providers: [
