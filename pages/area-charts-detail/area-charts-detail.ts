@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Content } from 'ionic-angular';
-import { AgrosulLocationService } from '../../services/domain/agrosulLocation.service';
 import { ClientService } from '../../services/domain/client.service';
 import { AgrosulLocationDTO } from '../../models/agrosulLocationDTO';
 import { ClientDTO } from '../../models/clientDTO';
@@ -18,6 +17,7 @@ import { MachineBrandService } from '../../services/domain/machineBrand.service'
 import { MachineBrandDTO } from '../../models/machineBrandDTO';
 import { AgrosulClassificationDTO } from '../../models/agrosulClassificationDTO';
 import { ChartUtils } from '../../Utils/charts-utils';
+import { AgrosulLocationService } from '../../services/domain/agrosulLocation.service';
 
 @IonicPage()
 @Component({
@@ -703,20 +703,20 @@ export class AreaChartsDetailPage {
   }
 
 
-  async generateAreaProdInfo(porteCliente){
-   let areaChart: AreaChartDTO[] = [];
-   areaChart = await this.areaChartService.getTotalAreaCultivGP(
+  async generateAreaProdInfo(porteCliente) {
+    let areaChart: AreaChartDTO[] = [];
+    areaChart = await this.areaChartService.getTotalAreaCultivGP(
       this.getRegioes(),
       porteCliente
-   ).toPromise();
-   let total = this.calcAreaClient(areaChart[0], porteCliente);
-   if (porteCliente == ChartUtils.CLASSF_GP) {
-        this.totalAreaGP = total;
-        this.totalAlgodaoArea = areaChart[0]["totalAlgodao"];
-        this.formGroup.controls.sumGP.setValue(this.formatarNumero(total))
-   }else{
-        this.formGroup.controls.sumPP.setValue(this.formatarNumero(total))
-   }
+    ).toPromise();
+    let total = this.calcAreaClient(areaChart[0], porteCliente);
+    if (porteCliente == ChartUtils.CLASSF_GP) {
+      this.totalAreaGP = total;
+      this.totalAlgodaoArea = areaChart[0]["totalAlgodao"];
+      this.formGroup.controls.sumGP.setValue(this.formatarNumero(total))
+    } else {
+      this.formGroup.controls.sumPP.setValue(this.formatarNumero(total))
+    }
   }
 
   generateAgrosulAreaProdInfo(porteCliente) {
