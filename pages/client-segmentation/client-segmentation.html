@@ -1,0 +1,36 @@
+<ion-content #pageContent fullscreen>
+    <form [formGroup]="formGroup" >
+    <ion-grid>
+        <ion-row>
+           <ion-col  >
+                <ion-item>
+                    <ion-label stacked>Região Agrosul</ion-label>
+                        <ion-select multiple="true"  formControlName="agLocationValue"  >
+                        <ion-option   *ngFor="let agLoc of agLocation" (ionSelect)="setLocationName(agLoc.locationName)"
+                                    value="{{agLoc.id}}" >{{agLoc.locationName}}
+                        </ion-option>
+                        </ion-select>
+                </ion-item> 
+            </ion-col>
+           <ion-col >
+                <ion-label stacked>Limite Resultados</ion-label>
+                <ion-select multiple="false"   formControlName="lineLimit"    >
+                    <ion-option  value="5"  >5</ion-option>
+                    <ion-option  value="10"  >10</ion-option>
+                    <ion-option  value="15"  >15</ion-option>
+                    <ion-option  value="20"  >20</ion-option>
+                    <ion-option  value="25"  >25</ion-option>
+                    <ion-option  value="9999"  >Todos</ion-option>
+                </ion-select>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+            <ion-col>
+                <button ion-button block >Filtrar</button>
+            </ion-col>
+            <ion-col col-9>
+            </ion-col>
+        </ion-row>
+      </ion-grid>
+</form>
+</ion-content>

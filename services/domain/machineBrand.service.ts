@@ -14,9 +14,9 @@ export class MachineBrandService{
         public http:HttpClient,
         private platform:Platform
         ){
-            if(this.platform.is("cordova")){
-                this.basePath = API_CONFIG.baseUrl;
-            }
+          if(this.platform.is("cordova")){
+             this.basePath = API_CONFIG.baseUrl;
+          }
     }
 
     findAll(): Observable<MachineBrandDTO[]>{

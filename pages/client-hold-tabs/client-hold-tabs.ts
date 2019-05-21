@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { AreaChartsDetailPage } from '../area-charts-detail/area-charts-detail';
-import { ClientTablePage } from '../client-table/client-table';
 import { ClientPage } from '../client/client';
 import { ClientDTO } from '../../models/clientDTO';
 import { FarmsDTO } from '../../models/farmsDTO';
