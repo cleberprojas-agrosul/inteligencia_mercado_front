@@ -17,6 +17,7 @@ import { MachineBrandService } from '../../services/domain/machineBrand.service'
 import { MachineBrandDTO } from '../../models/machineBrandDTO';
 import { MachineModelService } from '../../services/domain/machineModel.service';
 import { ChartUtils } from '../../Utils/charts-utils';
+import { Machinechart } from '../../charts/machine-chart';
 
 @IonicPage()
 @Component({
@@ -96,7 +97,8 @@ export class AreaChartsPage {
     public areaChartService: AreaChartService,
     public clientService: ClientService,
     public machineModelService: MachineModelService,
-    public formBuiler: FormBuilder) {
+    public formBuiler: FormBuilder,
+    public machineCharts : Machinechart) {
     this.color = new ColorChartUtils()
     this.formGroup = formBuiler.group({
       farmAreaType: [] = [],
@@ -127,7 +129,6 @@ export class AreaChartsPage {
       sumClientFeijao: [] = [],
 
       mediaMaquinaGp: [] = [0],
-      AllBrands: [] = [""],
       clientName: " ",
       clientId: " ",
       lastbrandName: "",
@@ -183,20 +184,10 @@ export class AreaChartsPage {
         'DESC',
         this.formGroup.value.lineLimit
       ).toPromise();
-    this.machineItems = response;
-    var label: String[] = [];
-    var data: number[] = [];
-    var soma = 0;
-    var allBrandsName: String[] = [];
-    this.machineItems.forEach((element, index) => {
-      allBrandsName[index] = element.clientName;
-      if (index <= 10) {
-        label[index] = element.clientName;
-        data[index] = element.parqueMaquinas;
-      }
-      soma += element.parqueMaquinas;
-    });
-    this.formGroup.controls.AllBrands.setValue(allBrandsName);
+    this.machineCharts.setMachineItems(response);
+    var label = this.machineCharts.getLabels();
+    var data = this.machineCharts.getData();
+    var soma = this.machineCharts.getSoma();
     this.formGroup.controls.sumNumberMaquinas.setValue(soma);
     this.formGroup.controls.sumMaquinas.setValue(this.formatarNumero(soma));
     return this.createPieChart(label, data)
@@ -229,7 +220,7 @@ export class AreaChartsPage {
     });
     if (this.barChart == null) {
       this.barChart = new Chart(this.barCanvas.nativeElement, await this.buildChartParamns(
-        'Total de Máquinas -' + this.formGroup.value.agLocationName,
+        'Agrosul (Todos)',
         legend,
         data1,
         labels,
@@ -247,9 +238,9 @@ export class AreaChartsPage {
     return await this.barChart;
   }
 
-  createLocationAreaPieChart(): void {
+  async createLocationAreaPieChart(){
     this.isenabled = true;
-    this.machineChartService.findByFilters(
+    let response = await this.machineChartService.findByFilters(
       0,
       0,
       '',
@@ -260,31 +251,16 @@ export class AreaChartsPage {
       'marca',
       'DESC',
       this.formGroup.value.lineLimit
-    ).subscribe(response => {
-      this.machineItems = response;
-      var label: String[] = [];
-      var data: number[] = [];
-      var index = 0;
-      var soma = 0;
-      var allBrandsName: String[] = [];
-      this.machineItems.forEach(element => {
-        allBrandsName[index] = element.clientName;
-        if (index <= 10) {
-          label[index] = element.clientName;
-          data[index] = element.parqueMaquinas;
-        }
-        index++;
-        soma += element.parqueMaquinas;
-      });
-      this.formGroup.controls.AllBrands.setValue(allBrandsName);
-      this.formGroup.controls.sumMaquinasRegiao.setValue(this.formatarNumero(soma));
-      this.createPieChartCompared(label, data);
-      var totalAg = this.formGroup.value.sumNumberMaquinas;
-      var totalRegiao = soma;
-      this.formGroup.controls.pctRegiao.setValue(String(Math.round((totalRegiao * 100) / totalAg)) + "%");
-    },
-      error => { console.log(error) }
-    );
+    ).toPromise(); 
+    this.machineCharts.setMachineItems(response);
+    var label =  this.machineCharts.getLabels();
+    var data=  this.machineCharts.getData();
+    var soma = this.machineCharts.getSoma();
+    this.formGroup.controls.sumMaquinasRegiao.setValue(this.formatarNumero(soma));
+    this.createPieChartCompared(label, data);
+    var totalAg = this.formGroup.value.sumNumberMaquinas;
+    var totalRegiao = soma;
+    this.formGroup.controls.pctRegiao.setValue(String(Math.round((totalRegiao * 100) / totalAg)) + "%");
   }
 
   createOnClickFunction() {
@@ -365,6 +341,7 @@ export class AreaChartsPage {
     return await params;
   }
 
+ 
   async  createPieChartCompared(labels: String[], data: number[]) {
     var legend: string[] = [""];
     labels.forEach(function results(e, i) {
@@ -373,14 +350,14 @@ export class AreaChartsPage {
     if (this.pieChartCompared == null) {
       this.pieChartCompared = new Chart(this.pieCanvasCompared.nativeElement,
         await this.buildChartParamns(
-          'Agrosul (todos)',
+          'Total de Máquinas - ' + this.formGroup.value.agLocationName,
           legend,
           data,
           labels,
           this.createOnClickFunction()
         )
       );
-    } else {
+    } else { /*TODO: Refatorar bloco do else */
       this.pieChartCompared.options.title.text = 'Total de Máquinas - ' + this.formGroup.value.agLocationName;
       this.pieChartCompared.data.labels = legend;
       this.pieChartCompared.data.backgroundColor = this.getBackgroundColors(labels);
@@ -555,9 +532,13 @@ export class AreaChartsPage {
       if (i[0] != null) {
         var e = i[0];
         var machineType = i[0]._chart.config.data.labels[e._index];
-        this.findMachinesByBrand(machineType);
-        this.findMachinesByType(machineType);
-        this.findMachinesByYearNoDetail(machineType);
+        if(machineType !=null 
+           && machineType != undefined ){
+
+             this.findMachinesByBrand(machineType);
+             this.findMachinesByType(machineType);
+             this.findMachinesByYearNoDetail(machineType);
+          }
       }
     }
   }
@@ -980,7 +961,7 @@ export class AreaChartsPage {
           dataset,
           this.createOnClickBrandsYear()));
     } else {
-      this.barChartMachineByYear = this.updateChartData( this.barChartMachineByYear, labels, labelColors, title, dataset);
+      this.barChartMachineByYearNoDetail = this.updateChartData( this.barChartMachineByYearNoDetail, labels, labelColors, title, dataset);
       this.barChartMachineByYearNoDetail.options.scales.xAxes[0].scaleLabel.labelString = this.getDetailByMachineType(clickValue);
       this.barChartMachineByYearNoDetail.update();
     }

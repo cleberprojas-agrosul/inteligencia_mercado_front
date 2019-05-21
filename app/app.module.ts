@@ -30,6 +30,7 @@ import { ClientPage } from '../pages/client/client';
 import { ClientFarmPage } from '../pages/client-farm/client-farm';
 import { ClientMachinesPage } from '../pages/client-machines/client-machines';
 import { ClientSegmentationPage } from '../pages/client-segmentation/client-segmentation';
+import { Machinechart } from '../charts/machine-chart';
 
 
 @NgModule({
@@ -78,7 +79,8 @@ import { ClientSegmentationPage } from '../pages/client-segmentation/client-segm
     AreaChartService,
     UserService,
     TypeClientService,
-    WorkMachineService
+    WorkMachineService,
+    Machinechart
   ]
 })
 export class AppModule {}
